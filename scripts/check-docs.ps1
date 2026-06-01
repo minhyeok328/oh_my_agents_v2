@@ -183,6 +183,11 @@ if (-not $failed) {
 }
 
 $requiredTextChecks = @(
+    @{ Path = "README.md"; Text = "# secret_agents_v2" },
+    @{ Path = "README.md"; Text = "v2 difference" },
+    @{ Path = "README.md"; Text = "governance control plane" },
+    @{ Path = "README.md"; Text = "Markdown links" },
+    @{ Path = "README.md"; Text = "secret-like values" },
     @{ Path = "README.md"; Text = "docs/onboarding/USER_GUIDE.ko.md" },
     @{ Path = "README.md"; Text = "docs/agent-rules/hybrid-orchestration.md" },
     @{ Path = "README.md"; Text = "workspaces/README.md" },
@@ -196,6 +201,10 @@ $requiredTextChecks = @(
     @{ Path = "AGENTS.md"; Text = "docs/agent-rules/workspaces.md" },
     @{ Path = "AGENTS.md"; Text = "commit-workflow" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "subagent-execution.md" },
+    @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "# secret_agents_v2" },
+    @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "v2 difference" },
+    @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "Markdown links" },
+    @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "secret-like values" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "hybrid-orchestration.md" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "System token usage" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "docs/onboarding/examples/LOGIN_SUBAGENT_FLOW.ko.md" },
@@ -286,6 +295,8 @@ $requiredTextChecks = @(
     @{ Path = "docs/contracts/FRONTEND_BACKEND_CONTRACT.md"; Text = "Scope note: this file is a shell-level reference or simulation contract." },
     @{ Path = "docs/contracts/INFRA_DEPLOYMENT_CONTRACT.md"; Text = "Scope note: this file is a shell-level reference or simulation contract." },
     @{ Path = "workspaces/README.md"; Text = "Active workspace: workspaces/<app-slug>" },
+    @{ Path = "workspaces/README.md"; Text = "secret_agents_v2" },
+    @{ Path = "docs/onboarding/examples/LOGIN_SUBAGENT_FLOW.ko.md"; Text = "secret_agents_v2" },
     @{ Path = "workspaces/README.md"; Text = ".agent/profile.md" },
     @{ Path = "workspaces/README.md"; Text = "commit-workflow" }
 )
