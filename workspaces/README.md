@@ -19,6 +19,8 @@ workspaces/<app-slug>/.agent/profile.md
 
 Use `docs/templates/WORKSPACE_PROFILE.template.md` when creating that profile.
 The profile should define allowed write scopes, forbidden paths, verification commands, contract locations, and Git pointer metadata.
+The `profile.md is authoritative` for app-local execution context.
+An `app-local AGENTS.md is optional`; create one only when the app needs stable local agent guidance beyond the profile.
 
 ## Workspace Rules
 

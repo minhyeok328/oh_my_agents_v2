@@ -75,18 +75,20 @@ Spec, 설계, 구현 계획 같은 계획 산출물만 요청한 경우에는 Fo
 1. `secret_agents_v2`를 프로젝트 루트로 엽니다.
 2. 실제 제품 앱을 `workspaces/<app-slug>` 아래에 clone하거나 복사합니다.
 3. `docs/templates/WORKSPACE_PROFILE.template.md`를 참고해 `workspaces/<app-slug>/.agent/profile.md`를 만듭니다.
-4. 앱 작업을 시작할 때 active workspace를 선언합니다.
+4. `profile.md is authoritative` for app-local execution context.
+5. `app-local AGENTS.md is optional`; 앱마다 새 `AGENTS.md`를 기본으로 만들 필요는 없습니다.
+6. 앱 작업을 시작할 때 active workspace를 선언합니다.
 
    ```text
    Active workspace: workspaces/<app-slug>
    ```
 
-5. 일반 작업은 Default Workflow로 진행합니다.
-6. Spec, 설계, 구현 계획만 필요하면 Formal Planning Workflow를 요청합니다.
-7. 기획부터 개발까지 맡길 때만 Full Delivery Workflow를 요청합니다.
-8. subagent가 필요하면 별도로 요청하고 task card로 범위를 고정합니다.
-9. 검증 명령은 active workspace 기준으로 실행합니다.
-10. Git 작업은 구현 작업과 분리합니다.
+7. 일반 작업은 Default Workflow로 진행합니다.
+8. Spec, 설계, 구현 계획만 필요하면 Formal Planning Workflow를 요청합니다.
+9. 기획부터 개발까지 맡길 때만 Full Delivery Workflow를 요청합니다.
+10. subagent가 필요하면 별도로 요청하고 task card로 범위를 고정합니다.
+11. 검증 명령은 active workspace 기준으로 실행합니다.
+12. Git 작업은 구현 작업과 분리합니다.
 
 ## 주요 구성 요소
 
@@ -181,6 +183,10 @@ Git Steward는 commit 전에 먼저 대상을 분류합니다.
 
 ```text
 Git target: shell | active app | none | Needs Confirmation
+```
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\classify-git-target.ps1
 ```
 
 - `shell`: `AGENTS.md`, `docs/**`, 템플릿, 온보딩 같은 `secret_agents_v2` 운영 문서

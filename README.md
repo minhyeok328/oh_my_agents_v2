@@ -24,8 +24,10 @@
 1. 실제 앱 repo를 `workspaces/<app-slug>/` 아래에 둡니다.
 2. [사용 설명서](./docs/onboarding/USER_GUIDE.ko.md)를 읽고 active workspace를 정합니다.
 3. `docs/templates/WORKSPACE_PROFILE.template.md`를 참고해 `workspaces/<app-slug>/.agent/profile.md`를 만듭니다.
-4. Codex에게 작업을 요청할 때 `Active workspace: workspaces/<app-slug>`를 함께 적습니다.
-5. 대부분의 작업은 Default Workflow로 진행하고, 기획부터 개발까지 맡길 때만 Full Delivery Workflow를 요청합니다.
+4. `profile.md is authoritative` for app-local execution context.
+5. `app-local AGENTS.md is optional`; 필요한 앱에서만 추가합니다.
+6. Codex에게 작업을 요청할 때 `Active workspace: workspaces/<app-slug>`를 함께 적습니다.
+7. 대부분의 작업은 Default Workflow로 진행하고, 기획부터 개발까지 맡길 때만 Full Delivery Workflow를 요청합니다.
 
 ## 핵심 모델
 
@@ -89,6 +91,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-docs.ps1
 ```
 
 이 검증은 필수 문서, 핵심 참조, task card 필드, Git Steward 규칙, Markdown links, 실제 `.env*` 추적 여부, secret-like values, Markdown trailing whitespace를 확인합니다.
+Git Steward가 staging 전에 변경 대상을 볼 때는 `scripts/classify-git-target.ps1`로 shell/app 범위를 먼저 분류합니다.
+오케스트레이션 구조는 `scripts/check-orchestration.ps1`, 계약 문서는 `scripts/check-contracts.ps1`로 별도 점검합니다.
 
 ## Skill 설치
 

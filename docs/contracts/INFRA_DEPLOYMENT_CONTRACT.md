@@ -54,6 +54,14 @@ Frozen baseline for hybrid or parallel implementation:
 - Deploy:
   - required only after all prior stages pass
 
+## Parallel Start Minimum
+
+- Runtime config keys must be documented by name in `.env.example` with dummy values only.
+- CI must run lint, test, and build checks when those project commands exist.
+- Deployment must not proceed from a branch or commit that has failing required checks.
+- Production logging must never include secrets, tokens, passwords, or raw credential payloads.
+- Hosting, database, and managed-service choices must be resolved before app-scoped deployment implementation starts.
+
 ## Operational Guarantees
 
 - Logging policy: never log secrets/tokens/passwords

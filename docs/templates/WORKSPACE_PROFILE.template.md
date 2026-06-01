@@ -2,6 +2,8 @@
 
 This file defines the app-local execution context for agents working inside this app.
 Place the filled profile at `workspaces/<app-slug>/.agent/profile.md`.
+This `profile.md is authoritative` for app-local execution context.
+An `app-local AGENTS.md is optional`; add one only when the app needs persistent local guidance that should be read after the root rules.
 
 ## Identity
 
@@ -86,3 +88,4 @@ This profile only records Git context. Load Git rules separately before commit, 
 - Local architecture notes:
 - Known risks:
 - Open `Needs Confirmation` items:
+- Optional app-local AGENTS.md notes:

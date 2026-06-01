@@ -1,8 +1,10 @@
 # Agent Rule Templates
 
-Use this file when creating folder-level `AGENTS.md` files.
+Use this file only when the user explicitly asks for folder-level `AGENTS.md` files or a local folder truly needs persistent agent guidance.
+Do not create folder-level AGENTS.md files by default.
 
 Folder-level rules must specialize local ownership and verification. They must not weaken root `AGENTS.md`.
+For app work, `profile.md` remains authoritative and `app-local AGENTS.md is optional`.
 
 For workspace-scoped app work, prefer:
 
