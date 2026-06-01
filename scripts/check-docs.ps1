@@ -22,6 +22,13 @@ function Test-RequiredFile($path) {
     Fail "missing required file: $path"
 }
 
+function Test-ForbiddenFile($path) {
+    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+        return
+    }
+    Fail "stale non-v2 artifact must be removed: $path"
+}
+
 function Test-Contains($path, $needle) {
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
         Fail "cannot check missing file: $path"
@@ -148,7 +155,23 @@ function Test-RealEnvFilesNotTracked {
     }
 }
 
+function Invoke-ProjectCheck($scriptPath) {
+    if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
+        Fail "missing project check script: $scriptPath"
+        return
+    }
+
+    & powershell -NoProfile -ExecutionPolicy Bypass -File $scriptPath
+    if ($LASTEXITCODE -ne 0) {
+        Fail "project check failed: $scriptPath"
+        return
+    }
+
+    Pass "project check: $scriptPath"
+}
+
 $requiredFiles = @(
+    ".github/workflows/docs-check.yml",
     "AGENTS.md",
     "README.md",
     "docs/onboarding/USER_GUIDE.ko.md",
@@ -171,6 +194,11 @@ $requiredFiles = @(
     "docs/contracts/DB_SCHEMA_CONTRACT.md",
     "docs/contracts/FRONTEND_BACKEND_CONTRACT.md",
     "docs/contracts/INFRA_DEPLOYMENT_CONTRACT.md",
+    "docs/fixtures/dry-run/README.md",
+    "scripts/classify-git-target.ps1",
+    "scripts/check-contracts.ps1",
+    "scripts/check-workspace-profile.ps1",
+    "scripts/check-orchestration.ps1",
     "scripts/install-commit-workflow.ps1",
     "workspaces/README.md"
 )
@@ -182,10 +210,29 @@ if (-not $failed) {
     Pass "required files"
 }
 
+$forbiddenFiles = @(
+    "docs/reports/TASK1_COMPLETION.md",
+    "docs/specs/TASK2_SUBTASKS.md",
+    "docs/specs/TASK3_IMPLEMENTATION_AGENTS_RESTRUCTURE.md",
+    "docs/templates/IMPLEMENTATION_AGENT_TEMPLATE.md"
+)
+
+foreach ($file in $forbiddenFiles) {
+    Test-ForbiddenFile $file
+}
+if (-not $failed) {
+    Pass "no stale non-v2 artifacts"
+}
+
 $requiredTextChecks = @(
+    @{ Path = ".github/workflows/docs-check.yml"; Text = "powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-docs.ps1" },
+    @{ Path = ".github/workflows/docs-check.yml"; Text = "git diff --check" },
+    @{ Path = ".github/workflows/docs-check.yml"; Text = "fetch-depth: 0" },
+    @{ Path = ".github/workflows/docs-check.yml"; Text = "github.event_name" },
     @{ Path = "README.md"; Text = "# secret_agents_v2" },
     @{ Path = "README.md"; Text = "v2 difference" },
     @{ Path = "README.md"; Text = "governance control plane" },
+    @{ Path = "README.md"; Text = "profile.md is authoritative" },
     @{ Path = "README.md"; Text = "Markdown links" },
     @{ Path = "README.md"; Text = "secret-like values" },
     @{ Path = "README.md"; Text = "docs/onboarding/USER_GUIDE.ko.md" },
@@ -194,6 +241,9 @@ $requiredTextChecks = @(
     @{ Path = "README.md"; Text = "spawn_agent" },
     @{ Path = "README.md"; Text = "docs/skills/commit-workflow/SKILL.md" },
     @{ Path = "README.md"; Text = "install-commit-workflow.ps1" },
+    @{ Path = "README.md"; Text = "classify-git-target.ps1" },
+    @{ Path = "README.md"; Text = "check-orchestration.ps1" },
+    @{ Path = "README.md"; Text = "check-contracts.ps1" },
     @{ Path = "README.md"; Text = "DOMAIN_ORCHESTRATOR_CARD.template.md" },
     @{ Path = "AGENTS.md"; Text = "docs/agent-rules/context-budget.md" },
     @{ Path = "AGENTS.md"; Text = "docs/agent-rules/hybrid-orchestration.md" },
@@ -209,6 +259,7 @@ $requiredTextChecks = @(
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "System token usage" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "docs/onboarding/examples/LOGIN_SUBAGENT_FLOW.ko.md" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "Git target: shell | active app | none | Needs Confirmation" },
+    @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "classify-git-target.ps1" },
     @{ Path = "docs/onboarding/examples/LOGIN_SUBAGENT_FLOW.ko.md"; Text = "spawn_agent" },
     @{ Path = "docs/onboarding/examples/LOGIN_SUBAGENT_FLOW.ko.md"; Text = "Subagent Task Card" },
     @{ Path = "docs/onboarding/examples/LOGIN_SUBAGENT_FLOW.ko.md"; Text = "Git Steward Handoff" },
@@ -228,6 +279,8 @@ $requiredTextChecks = @(
     @{ Path = "docs/agent-rules/workspaces.md"; Text = "workspaces/<app-slug>/.agent/profile.md" },
     @{ Path = "docs/agent-rules/workspaces.md"; Text = "shell-level reference or simulation contracts" },
     @{ Path = "docs/agent-rules/workspaces.md"; Text = "app-specific frozen contracts" },
+    @{ Path = "docs/agent-rules/templates.md"; Text = "Do not create folder-level AGENTS.md files by default." },
+    @{ Path = "docs/agent-rules/templates.md"; Text = "app-local AGENTS.md is optional" },
     @{ Path = "docs/agent-rules/subagent-execution.md"; Text = "Subagents do not choose their own workspace" },
     @{ Path = "docs/agent-rules/subagent-execution.md"; Text = "Subagents are opt-in execution resources" },
     @{ Path = "docs/agent-rules/subagent-execution.md"; Text = "dependency node" },
@@ -245,6 +298,8 @@ $requiredTextChecks = @(
     @{ Path = "docs/agent-rules/commits.md"; Text = "Pre-Stage Classification" },
     @{ Path = "docs/agent-rules/commits.md"; Text = "Git Steward Stop Conditions" },
     @{ Path = "docs/templates/WORKSPACE_PROFILE.template.md"; Text = "## Git Pointer" },
+    @{ Path = "docs/templates/WORKSPACE_PROFILE.template.md"; Text = "profile.md is authoritative" },
+    @{ Path = "docs/templates/WORKSPACE_PROFILE.template.md"; Text = "app-local AGENTS.md is optional" },
     @{ Path = "docs/templates/SUBAGENT_TASK_CARD.template.md"; Text = "Active workspace:" },
     @{ Path = "docs/templates/SUBAGENT_TASK_CARD.template.md"; Text = "docs/agent-rules/workspaces.md when app-scoped" },
     @{ Path = "docs/templates/SUBAGENT_TASK_CARD.template.md"; Text = "Workspace profile, when app-scoped:" },
@@ -294,11 +349,26 @@ $requiredTextChecks = @(
     @{ Path = "docs/contracts/DB_SCHEMA_CONTRACT.md"; Text = "Scope note: this file is a shell-level reference or simulation contract." },
     @{ Path = "docs/contracts/FRONTEND_BACKEND_CONTRACT.md"; Text = "Scope note: this file is a shell-level reference or simulation contract." },
     @{ Path = "docs/contracts/INFRA_DEPLOYMENT_CONTRACT.md"; Text = "Scope note: this file is a shell-level reference or simulation contract." },
+    @{ Path = "docs/contracts/INFRA_DEPLOYMENT_CONTRACT.md"; Text = "## Parallel Start Minimum" },
+    @{ Path = "docs/fixtures/dry-run/README.md"; Text = "Dry-run fixture" },
+    @{ Path = "docs/fixtures/dry-run/README.md"; Text = "profile.md is authoritative" },
+    @{ Path = "docs/fixtures/dry-run/README.md"; Text = "app-local AGENTS.md is optional" },
+    @{ Path = "docs/fixtures/dry-run/README.md"; Text = "Git target: shell | active app | none | Needs Confirmation" },
+    @{ Path = "docs/fixtures/dry-run/README.md"; Text = "check-orchestration.ps1" },
+    @{ Path = "docs/fixtures/dry-run/README.md"; Text = "check-contracts.ps1" },
     @{ Path = "workspaces/README.md"; Text = "Active workspace: workspaces/<app-slug>" },
     @{ Path = "workspaces/README.md"; Text = "secret_agents_v2" },
+    @{ Path = "workspaces/README.md"; Text = "profile.md is authoritative" },
+    @{ Path = "workspaces/README.md"; Text = "app-local AGENTS.md is optional" },
     @{ Path = "docs/onboarding/examples/LOGIN_SUBAGENT_FLOW.ko.md"; Text = "secret_agents_v2" },
     @{ Path = "workspaces/README.md"; Text = ".agent/profile.md" },
-    @{ Path = "workspaces/README.md"; Text = "commit-workflow" }
+    @{ Path = "workspaces/README.md"; Text = "commit-workflow" },
+    @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "profile.md is authoritative" },
+    @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "app-local AGENTS.md is optional" },
+    @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\check-workspace-profile.ps1"' },
+    @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\classify-git-target.ps1"' },
+    @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\check-orchestration.ps1"' },
+    @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\check-contracts.ps1"' }
 )
 
 foreach ($check in $requiredTextChecks) {
@@ -307,6 +377,11 @@ foreach ($check in $requiredTextChecks) {
 if (-not $failed) {
     Pass "required references and fields"
 }
+
+Invoke-ProjectCheck ".\scripts\check-workspace-profile.ps1"
+Invoke-ProjectCheck ".\scripts\classify-git-target.ps1"
+Invoke-ProjectCheck ".\scripts\check-orchestration.ps1"
+Invoke-ProjectCheck ".\scripts\check-contracts.ps1"
 
 $markdownFiles = @(
     (Get-TrackedMarkdownFiles) +
