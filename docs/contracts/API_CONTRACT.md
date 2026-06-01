@@ -1,6 +1,6 @@
 # API Contract
 
-This document defines the **backend API surface** as a shared contract for parallel work.
+This document defines the **backend API surface** as a shared contract for hybrid or parallel work.
 
 Scope note: this file is a shell-level reference or simulation contract.
 For app-scoped work, freeze task-specific API contracts under `workspaces/<app-slug>/.agent/contracts/` unless the Task explicitly declares this file as the active contract location.
@@ -9,7 +9,7 @@ For app-scoped work, freeze task-specific API contracts under `workspaces/<app-s
 
 - Owner: Integration Coordinator Agent
 - Review: Review Agent (+ Security Review Agent when relevant)
-- Change policy: Contract changes must land **before** parallel implementation starts.
+- Change policy: Contract changes must land **before** dependent implementation starts.
 
 ## Scope
 
@@ -43,7 +43,7 @@ Security note: error messages must not leak stack traces, internal paths, or sec
 
 ## Parallel Start Minimum (Frozen For Task 3)
 
-These values are fixed to enable safe parallel implementation. If a change is needed, update this contract first and re-run integration sync.
+These values are fixed to enable safe hybrid or parallel implementation. If a change is needed, update this contract first and re-run integration sync.
 
 - Versioning: all endpoints must be under `/api/v1`
 - Success response envelope:

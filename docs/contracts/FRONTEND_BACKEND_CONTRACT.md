@@ -1,6 +1,6 @@
 # Frontend ↔ Backend Contract
 
-This document binds the API surface to frontend expectations so parallel work cannot diverge.
+This document binds the API surface to frontend expectations so hybrid or parallel work cannot diverge.
 
 Scope note: this file is a shell-level reference or simulation contract.
 For app-scoped work, freeze task-specific frontend/backend contracts under `workspaces/<app-slug>/.agent/contracts/` unless the Task explicitly declares this file as the active contract location.
@@ -30,7 +30,7 @@ For app-scoped work, freeze task-specific frontend/backend contracts under `work
 
 ## Data Shape Guarantees
 
-Frozen baseline for parallel implementation:
+Frozen baseline for hybrid or parallel implementation:
 
 - API payload keys: `camelCase`
 - Date-time fields: ISO8601 UTC strings
@@ -40,7 +40,7 @@ Frozen baseline for parallel implementation:
 
 ## Auth UX Contract
 
-Frozen baseline for parallel implementation:
+Frozen baseline for hybrid or parallel implementation:
 
 - `401 Unauthorized`:
   - treat as authentication failure

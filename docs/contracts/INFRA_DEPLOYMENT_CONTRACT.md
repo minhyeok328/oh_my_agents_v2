@@ -1,6 +1,6 @@
 # Infrastructure / Deployment Contract
 
-This document defines the infrastructure and deployment interface for parallel work.
+This document defines the infrastructure and deployment interface for hybrid or parallel work.
 
 Scope note: this file is a shell-level reference or simulation contract.
 For app-scoped work, freeze task-specific infrastructure contracts under `workspaces/<app-slug>/.agent/contracts/` unless the Task explicitly declares this file as the active contract location.
@@ -31,7 +31,7 @@ For app-scoped work, freeze task-specific infrastructure contracts under `worksp
 
 ## Deployment Shape
 
-Frozen baseline for parallel implementation:
+Frozen baseline for hybrid or parallel implementation:
 
 - Containerization: Docker required
 - Process model: single deployable app service + managed database

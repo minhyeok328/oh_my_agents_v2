@@ -1,6 +1,6 @@
-# Risk Register (Parallel Agent Operation)
+# Risk Register (Hybrid Agent Operation)
 
-This register tracks workflow and architecture risks introduced by parallel work, and how we mitigate them.
+This register tracks workflow and architecture risks introduced by hybrid or parallel work, and how we mitigate them.
 
 ## How to Use
 
@@ -12,7 +12,7 @@ This register tracks workflow and architecture risks introduced by parallel work
 
 ### R-001: Contract drift between agents
 
-- Description: Parallel agents implement based on different assumptions about interfaces.
+- Description: Agents implement based on different assumptions about interfaces.
 - Impact: Integration failures, rework, inconsistent UX, broken deployments.
 - Mitigation:
   - Contract-first gating (`docs/contracts/*`)
@@ -31,7 +31,18 @@ This register tracks workflow and architecture risks introduced by parallel work
 - Owner: Task Agent
 - Status: Active
 
-### R-003: Security regressions during fast parallel iteration
+### R-003: Dependency graph drift
+
+- Description: A downstream node starts before its real prerequisites are satisfied.
+- Impact: Rework, broken integration, false progress, stale task cards.
+- Mitigation:
+  - Hybrid orchestration dependency graph (`docs/agent-rules/hybrid-orchestration.md`)
+  - Ready-node launch rule
+  - Dependency Graph Status section in sync checklist
+- Owner: Root Orchestrator / Domain Orchestrator
+- Status: Active
+
+### R-004: Security regressions during fast hybrid or parallel iteration
 
 - Description: Auth/input/file/dependency changes slip through without full security review.
 - Impact: Vulnerabilities, secret exposure, compliance risk.
@@ -41,7 +52,7 @@ This register tracks workflow and architecture risks introduced by parallel work
 - Owner: Security Review Agent
 - Status: Active
 
-### R-004: Workspace boundary violations (accidental)
+### R-005: Workspace boundary violations (accidental)
 
 - Description: Tools/scripts or commands access outside the repo.
 - Impact: Data leakage, unintended modifications, irreproducibility.
@@ -51,7 +62,7 @@ This register tracks workflow and architecture risks introduced by parallel work
 - Owner: All agents
 - Status: Active
 
-### R-005: OS-specific absolute paths in docs/specs
+### R-006: OS-specific absolute paths in docs/specs
 
 - Description: Specs include absolute paths that don't match teammates' OS.
 - Impact: Confusion, broken instructions.
@@ -59,4 +70,27 @@ This register tracks workflow and architecture risks introduced by parallel work
   - Prefer relative paths and repo-root references
   - Mark as Needs Confirmation if absolute path is unavoidable
 - Owner: Spec Agent / Task Agent
+- Status: Active
+
+### R-007: System token usage drift
+
+- Description: Agent prompts, task cards, handovers, or review packets grow without a recorded safety or coordination reason.
+- Impact: Slower work, higher context cost, stale assumptions, missed scope boundaries.
+- Mitigation:
+  - Record Low/Medium/High or exact system token usage when available
+  - Require usage evaluation in subagent, review, sync, and handover outputs
+  - Trim full documents into summaries plus file references when safe
+- Owner: Root Orchestrator / Domain Orchestrator
+- Status: Active
+
+### R-008: Validation blind spots
+
+- Description: Documentation checks pass because required phrases exist, while links, secret-like values, or gate structure are broken.
+- Impact: Agents trust incomplete governance docs and repeat unsafe patterns.
+- Mitigation:
+  - Validate internal Markdown links
+  - Block tracked real `.env*` files except `.env.example`
+  - Scan for strong secret-like token and private key patterns
+  - Add structural checks when a new gate or template field becomes required
+- Owner: Integration Coordinator Agent / QA-Test Implementation Agent
 - Status: Active

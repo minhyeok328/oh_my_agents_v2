@@ -1,6 +1,6 @@
 # Agent Sync Checklist
 
-Use this checklist at every planned sync point when parallel work is active.
+Use this checklist at every planned sync point when hybrid or parallel work is active.
 
 ## 1) Workspace Status
 
@@ -20,7 +20,15 @@ Use this checklist at every planned sync point when parallel work is active.
 - [ ] Relevant contracts include a filled **Parallel Start Minimum** section
 - [ ] Any remaining unknowns are marked **Needs Confirmation** (no guessing codified as rules)
 
-## 3) Ownership & Scope
+## 3) Dependency Graph Status
+
+- [ ] Current wave or ready-node set is recorded
+- [ ] Newly completed nodes have their downstream unlocks checked
+- [ ] Newly ready nodes may start without waiting for unrelated in-progress nodes
+- [ ] Blocked nodes have an owner and next decision path
+- [ ] No node was launched before its prerequisites were satisfied
+
+## 4) Ownership & Scope
 
 - [ ] Each subagent returned `Status: Completed`, `Blocked`, or `Needs Confirmation`
 - [ ] Each subagent task card declared an owned outcome and checkpoint expectations
@@ -33,20 +41,20 @@ Use this checklist at every planned sync point when parallel work is active.
 - [ ] QA/Test changes are confined to tests/verification scaffolding
 - [ ] No agent changed unrelated behavior or files
 
-## 4) Security Gates
+## 5) Security Gates
 
 - [ ] No secrets were introduced (no tokens/passwords/keys)
 - [ ] `.env`, `.env.local`, and real `.env.*` are not tracked
 - [ ] Security Review Agent ran checklist when triggered by scope
 
-## 5) Integration Readiness
+## 6) Integration Readiness
 
 - [ ] API response shapes match frontend expectations
 - [ ] DB migrations (if any) are compatible with deploy strategy
 - [ ] Infra env var names match `.env.example` structure (dummy only)
 - [ ] Error handling is consistent and does not leak internals
 
-## 6) Verification
+## 7) Verification
 
 Project-specific commands:
 
@@ -57,13 +65,21 @@ Project-specific commands:
 
 If a command is not configured yet, record "Not applicable yet" with reason and owner.
 
-## 7) Drift Handling
+## 8) Token Usage And Evaluation
+
+- [ ] System token usage was captured as exact counts when available, otherwise Low/Medium/High.
+- [ ] High-usage prompts have a recorded reason tied to safety, contract, security, or integration needs.
+- [ ] Subagent outputs include usage evaluation and context trim/keep notes.
+- [ ] The next wave can use a smaller context packet where safe.
+- [ ] No task card carried unrelated history or full documents when summaries would suffice.
+
+## 9) Drift Handling
 
 - [ ] If any drift exists, contract is updated first
 - [ ] Subtasks are re-split if drift indicates coupling was underestimated
 - [ ] Any `Needs Confirmation` item from subagent output is resolved before final handover
 
-## 8) Cross-Agent Sync
+## 10) Cross-Agent Sync
 
 - [ ] Each worker reported status through the orchestrator or Integration Coordinator
 - [ ] `Needs Confirmation` items were routed through the orchestrator
