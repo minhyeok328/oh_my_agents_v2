@@ -1,0 +1,28 @@
+name: Docs Check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  docs-check:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run docs check
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-docs.ps1
+
+      - name: Check diff whitespace
+        shell: powershell
+        run: |
+          if ("${{ github.event_name }}" -eq "pull_request") {
+            git diff --check "origin/${{ github.base_ref }}...HEAD"
+          } else {
+            git diff-tree --check --root --no-commit-id -r HEAD
+          }
