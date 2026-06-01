@@ -125,7 +125,7 @@ For Default Workflow work that is not part of an existing numbered Task sequence
 
 ## Active Workspace Metadata
 
-When `secret_agents` is used as a shell for an app under `workspaces/`, Full Delivery app implementation must include:
+When `secret_agents_v2` is used as a governance control plane for an app under `workspaces/`, Full Delivery app implementation must include:
 
 ```md
 Active workspace:

@@ -1,9 +1,23 @@
-# secret_agents
+# secret_agents_v2
 
-`secret_agents`는 Codex와 subagent가 사용자 Git 프로젝트를 안전하게 작업하도록 돕는 운영 셸입니다.
-제품 앱 자체가 아니라, 앱을 넣고 작업 경계와 검증 흐름을 정하는 문서/규칙 중심의 workspace입니다.
+`secret_agents_v2`는 Codex와 subagent가 사용자 Git 프로젝트를 안전하게 작업하도록 돕는 governance control plane입니다.
+제품 앱 자체가 아니라, 앱을 넣고 작업 경계, 역할 분리, dependency graph, 검증 흐름을 정하는 문서/규칙 중심의 운영 셸입니다.
 
 처음 사용하는 경우 먼저 [사용 설명서](./docs/onboarding/USER_GUIDE.ko.md)를 읽어 주세요.
+
+## v2 difference: 기존 secret_agents와 다른 점
+
+기존 `secret_agents`가 "작업 경계와 기본 안전 규칙을 둔 단일 운영 셸"에 가까웠다면, `secret_agents_v2`는 큰 작업을 여러 역할과 dependency-aware hybrid orchestration으로 굴리기 위한 운영 레이어입니다.
+
+| 영역 | 기존 secret_agents | secret_agents_v2 |
+| --- | --- | --- |
+| 실행 모델 | Codex 중심의 단일 작업 흐름 | Root Orchestrator, Domain Orchestrator, Task Worker, Review/Security/Git 역할 분리 |
+| 병렬 처리 | 병렬 가능성을 문서화 | dependency graph, ready node, rolling unlock 기반 hybrid orchestration |
+| 계약 관리 | 공유 contract 참고 | contract-first gate와 app-scoped frozen contract 위치를 명시 |
+| subagent 사용 | 작은 task card 중심 | 명시적 delegation 승인, owned outcome, checkpoint, unlock, usage evaluation까지 요구 |
+| context 관리 | context를 작게 유지 | System token usage를 Low/Medium/High 또는 exact count로 기록하고 평가 |
+| 검증 | 필수 문구와 trailing whitespace 확인 | Markdown link, real env tracking, secret-like value, gate 필드까지 검증 |
+| Git | 구현과 Git 작업 분리 | Git Steward와 commit-workflow를 명확히 분리하고 shell/app target을 분류 |
 
 ## 빠른 시작
 
@@ -18,7 +32,7 @@
 일반적인 구조는 다음과 같습니다.
 
 ```text
-secret_agents/                  # 운영 셸
+secret_agents_v2/               # governance control plane / 운영 셸
 +-- AGENTS.md                    # 항상 적용되는 운영 규칙
 +-- docs/                        # agent 규칙, 템플릿, 온보딩 문서
 +-- scripts/                     # 문서 검증 등 보조 스크립트
@@ -74,7 +88,7 @@ agent는 이 active workspace와 배정된 write scope 안에서만 구현해야
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-docs.ps1
 ```
 
-이 검증은 필수 문서, 핵심 참조, task card 필드, Git Steward 규칙, Markdown trailing whitespace를 확인합니다.
+이 검증은 필수 문서, 핵심 참조, task card 필드, Git Steward 규칙, Markdown links, 실제 `.env*` 추적 여부, secret-like values, Markdown trailing whitespace를 확인합니다.
 
 ## Skill 설치
 

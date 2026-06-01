@@ -1,7 +1,9 @@
 # Workspaces
 
 `workspaces/` contains the real app repositories that Codex may work on.
-The `secret_agents` root stays as the operating shell for rules, templates, contracts, and coordination docs.
+The `secret_agents_v2` root stays as the governance control plane for rules, templates, contracts, and coordination docs.
+
+Compared with the original `secret_agents` shell, v2 expects each app workspace to participate in a stricter operating model: one active workspace, an app-local profile, contract-first coordination, explicit verification commands, and Git Steward separation.
 
 Declare exactly one active workspace before app-scoped implementation:
 
