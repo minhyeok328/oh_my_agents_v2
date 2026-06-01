@@ -1,6 +1,59 @@
 # Agent Roles
 
-Use this file when assigning work to core or extended agents.
+Use this file when assigning work to core, orchestration, or extended agents.
+
+## Orchestration Roles
+
+Use these roles for dependency-aware hybrid work from `docs/agent-rules/hybrid-orchestration.md`.
+They coordinate execution; they do not weaken workspace, scope, security, or Git rules.
+
+### Root Orchestrator
+
+Owns Epic-level direction and final integration judgment.
+
+Responsibilities:
+
+- define Epic goal, non-goals, priority, scope, risks, and completion criteria
+- select Default, Formal Planning, Full Delivery, hybrid, or pure parallel workflow shape
+- define the domain impact map and dependency graph
+- approve cross-domain contracts and contract changes
+- activate Domain Orchestrators only when the domain scope justifies it
+- open ready work waves and unlock downstream work when dependencies are satisfied
+- coordinate blockers, scope creep, security review triggers, and integration decisions
+- track token usage and evaluation when context cost changes orchestration choices
+- act as the single user-facing reporting channel
+- mark final completion only after verification, scope control, and required reviews pass
+
+Must not:
+
+- micromanage worker implementation details
+- continuously bypass Domain Orchestrators to direct individual workers
+- treat subagent completion as final Epic completion
+- run Git work unless explicitly acting as Git Steward too
+
+### Domain Orchestrator
+
+Owns execution flow inside one domain such as backend, frontend, database, infrastructure, QA, or security.
+
+Responsibilities:
+
+- break domain scope into worker-owned nodes
+- choose domain-local sequential or parallel execution
+- prepare or request bounded task cards for domain workers
+- maintain domain status, blockers, verification evidence, and downstream unlocks
+- report token usage and evaluation for domain prompts, worker cards, and returned outputs
+- escalate contract drift, security triggers, scope conflicts, and cross-domain impact to Root
+- report compactly using the format in `docs/agent-rules/hybrid-orchestration.md`
+
+Must not:
+
+- change cross-domain contracts without Root or Integration Coordinator approval
+- broaden worker scope silently
+- decide final Epic completion
+- edit outside the assigned domain scope
+
+The Root Orchestrator may hold this role inline for small and medium domain slices.
+Use a separate Domain Orchestrator subagent only when it reduces context pressure or coordination risk.
 
 ## Core Roles
 
@@ -27,6 +80,7 @@ Responsibilities:
 - split large Tasks into smaller Subtasks
 - define dependencies and execution order
 - write completion criteria and verification steps
+- define expected system token usage and usage evaluation for each task card when subagents are used
 - ensure every unit of work stays inside the workspace boundary
 
 ### Implementation Agent
@@ -42,7 +96,7 @@ Responsibilities:
 - avoid unrelated refactors
 - avoid Git commands, commits, branches, pushes, and Git metadata changes unless explicitly assigned as Git work
 - run relevant local checks
-- report changed files, implementation decisions, checks, and known limitations
+- report changed files, implementation decisions, checks, token usage evaluation, and known limitations
 
 ### Review Agent
 
@@ -100,7 +154,7 @@ Extended roles refine implementation ownership. They do not weaken core workflow
 - Owns shared interface contract consistency across shell reference contracts and app-frozen contracts.
 - Uses `docs/contracts/` for shell-level reference or simulation contracts.
 - Uses `workspaces/<app-slug>/.agent/contracts/` for app-scoped frozen task contracts unless the Task declares another location.
-- Ensures contracts are reviewed before parallel implementation begins.
+- Ensures contracts are reviewed before dependent implementation begins.
 - Runs sync point checklists under `docs/coordination/`.
 - Resolves contract drift by updating contracts first.
 - Confirms active workspace metadata is present before workspace-scoped implementation begins.
@@ -113,9 +167,10 @@ Extended roles refine implementation ownership. They do not weaken core workflow
 - Must not implement product or governance changes while acting only as Git Steward Agent.
 - Is called separately from implementation agents to keep implementation prompts small.
 
-## Parallel Work Constraints
+## Hybrid And Parallel Work Constraints
 
 - Contract-first: cross-domain interfaces must be documented before implementation.
+- Dependency-aware: workers start only when their prerequisites are satisfied.
 - No speculative divergence: unclear interfaces must be marked `Needs Confirmation`.
 - Owned-scope changes only: each domain agent edits only files in its responsibility area.
 - Active workspace: workspace-scoped work must declare one active `workspaces/<app-slug>` root.

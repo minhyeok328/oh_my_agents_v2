@@ -8,6 +8,39 @@ The goal is to keep prompts small while preserving the rules needed for safe wor
 Load the smallest rule set that lets the current role act safely.
 Prefer short task-local summaries and file references over pasting full rule files into every agent prompt.
 
+## System Token Usage
+
+System token usage means the operational context cost of system/developer instructions, root rules, skill instructions, workflow rules, workspace profiles, contracts, templates, task cards, and handovers.
+It does not mean API tokens, credentials, secrets, auth tokens, or billable product token accounting.
+
+For every workflow shape, keep system token usage proportional to risk:
+
+- Default Workflow: load only the files needed for the local answer or edit.
+- Formal Planning Workflow: load planning rules and directly relevant references, then summarize large source material.
+- Full Delivery Workflow: load orchestration, role, workspace, contract, and review rules only when those gates apply.
+- Hybrid or parallel work: send compact task cards instead of full planning packets, and include only the rule files needed by that role.
+- Review, security, integration, and Git work: load the role-specific rules, evidence, and changed-file context required for the decision.
+
+Record exact token counts only when the platform exposes them.
+Otherwise record a qualitative estimate:
+
+- Low: root rules plus a small number of focused files.
+- Medium: several rule files, contracts, or task cards are required.
+- High: broad planning packets, large specs, multiple contracts, or repeated handovers are required.
+
+## Usage Evaluation
+
+Evaluate usage before final handover or sync completion.
+The evaluation should answer:
+
+- Was each loaded rule file or prompt section necessary for safety?
+- Could any large context have been replaced with a summary plus file reference?
+- Did a subagent receive enough context to act without receiving unrelated history?
+- Did the extra context reduce risk, review cost, or coordination overhead enough to justify its size?
+- What should be trimmed or kept for the next related task?
+
+If usage is High, record why it was unavoidable or mark the work `Needs Confirmation` before launching more agents.
+
 ## Always-On Context
 
 Every agent must follow:
@@ -26,6 +59,7 @@ Load detailed rules only when the role or task needs them:
 | Situation | Load |
 | --- | --- |
 | Formal Planning, Full Delivery planning, Spec writing, or Task/Subtask creation | `docs/agent-rules/workflow.md` |
+| Dependency-aware Epic, hybrid orchestration, or Root/Domain Orchestrator coordination | `docs/agent-rules/hybrid-orchestration.md` |
 | Role assignment or multi-agent work | `docs/agent-rules/roles.md` |
 | Subagent launch or integration | `docs/agent-rules/subagent-execution.md` |
 | Active app or workspace-scoped implementation | `docs/agent-rules/workspaces.md` |
@@ -48,6 +82,8 @@ Minimum fields:
 - profile path
 - role
 - Subtask reference
+- dependency prerequisites and unlocks when hybrid orchestration applies
+- system token usage estimate and evaluation requirement
 - allowed write scope
 - read-only context
 - forbidden paths
@@ -80,6 +116,8 @@ Subagent output should be concise and reviewable:
 - changed files
 - decisions made
 - verification commands and results
+- downstream unlocks or blocked dependencies when hybrid orchestration applies
+- system token usage estimate and usage evaluation
 - assumptions or `Needs Confirmation` items
 - security-sensitive areas touched
 

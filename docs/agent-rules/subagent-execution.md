@@ -1,6 +1,7 @@
 # Subagent Execution Rules
 
 Use this file when the main Codex session prepares, launches, receives, or integrates subagent work.
+Use `docs/agent-rules/hybrid-orchestration.md` first when subagents are part of dependency-aware Epic or cross-domain work.
 
 Subagents do not choose their own workspace, write scope, Git behavior, or verification strategy.
 The main Codex session acts as the orchestrator and must launch subagents with a bounded task card.
@@ -13,11 +14,14 @@ It keeps subagent work scoped, reviewable, and cheap enough to use deliberately.
 
 Subagents are opt-in execution resources, not the default execution path.
 The default path is for the main Codex session to handle the work locally.
+In hybrid orchestration, each subagent should map to a dependency node with explicit prerequisites and unlocks.
+System token usage must be estimated before launch and evaluated after return so delegation stays cheaper than local execution plus review.
 
 Use it for:
 
-- approved Full Delivery parallel work
+- approved Full Delivery hybrid or parallel work
 - domain-owned implementation subtasks
+- Domain Orchestrator work that is large enough to justify a separate coordination layer
 - review, security review, integration, or Git work that should be separated from implementation
 - any task where a compact task card is safer than broad shared context
 
@@ -32,10 +36,10 @@ Use workflow mode and explicit user approval to decide whether delegation is wor
 | --- | --- | --- |
 | Default Workflow | Do not delegate by default | Questions, explanations, small edits, and focused fixes should stay local unless the user explicitly asks for delegation. |
 | Formal Planning Workflow | Conditional | Delegate only bounded research, review, or planning checks when the user explicitly asks for delegation or a separate pass. |
-| Full Delivery Workflow | Conditional | Delegate only approved, bounded work with explicit scope and a useful review, security, integration, Git, or parallel benefit. |
+| Full Delivery Workflow | Conditional | Delegate only approved, bounded work with explicit scope and a useful review, security, integration, Git, hybrid, or parallel benefit. |
 
 Workflow mode alone does not authorize spawning.
-Actual Superpowers `spawn_agent` use requires the user to explicitly ask for subagents, delegation, or parallel agent work.
+Actual Superpowers `spawn_agent` use requires the user to explicitly ask for subagents, delegation, hybrid orchestration, or parallel agent work.
 If the user did not ask for delegation, the orchestrator should keep work local or ask before spawning.
 
 ## Superpowers Harness Gate
@@ -51,9 +55,9 @@ Available harness actions may include:
 
 Before calling `spawn_agent`, the orchestrator must:
 
-- confirm the user explicitly asked for subagents, delegation, or parallel agent work
+- confirm the user explicitly asked for subagents, delegation, hybrid orchestration, or parallel agent work
 - choose one immediate local task to keep moving on the critical path
-- delegate only non-overlapping work that can run in parallel
+- delegate only non-overlapping work that is ready in the dependency graph
 - avoid delegating urgent blocking work when doing it locally is faster or safer
 - ensure coding workers have disjoint write scopes
 - avoid duplicate agents on the same unresolved task
@@ -67,9 +71,12 @@ Before launching a subagent, it must:
 - confirm the active workspace when app-scoped
 - read the workspace profile when available
 - identify allowed write scope and forbidden paths
+- decide whether hybrid orchestration or pure parallel execution applies
 - decide whether contracts are required
+- identify dependency nodes, prerequisites, and downstream unlocks when hybrid orchestration applies
 - decide whether security review is triggered
 - decide whether Git Steward work is required
+- estimate System token usage and define the Usage evaluation expected from the subagent
 - create or fill a Subagent Task Card
 - keep the user informed during long-running work
 
@@ -107,8 +114,9 @@ If the subagent owns a clear scope and is making progress, let it carry that sco
 Use a subagent when:
 
 - the user explicitly requested bounded delegation and the work can be isolated
-- Full Delivery parallel work is active
+- Full Delivery hybrid or parallel work is active
 - a domain-owned Subtask can be isolated
+- a Domain Orchestrator can reduce context pressure for a large domain slice
 - review, security review, integration, or Git work should be separated from implementation
 - context can be reduced by sending a focused task card
 - a bounded second pass is useful for correctness, security, or scope control
@@ -132,15 +140,18 @@ A subagent may start only when:
 - allowed write scope is explicit
 - forbidden paths are explicit
 - verification command is defined or marked `Needs Confirmation`
+- System token usage estimate is recorded as Low, Medium, High, or exact count when available
+- Usage evaluation is required in the return output
 - stop conditions are included
 - Git behavior is explicit
 
 Implementation agents must not run Git commands, commit, branch, push, or modify Git metadata.
 
-For Full Delivery parallel work, also confirm:
+For Full Delivery hybrid or parallel work, also confirm:
 
 - relevant contracts are reviewed or marked `Needs Confirmation`
 - ownership overlap has been checked
+- dependency prerequisites and downstream unlocks are known or marked `Needs Confirmation`
 - security trigger decision is recorded
 - sync or review path is known
 
@@ -163,10 +174,12 @@ Required fields:
 - workspace profile
 - task or Subtask reference
 - role
+- dependency prerequisites and unlocks when hybrid orchestration applies
 - required read context
 - allowed write scope
 - read-only context
 - forbidden paths
+- system token usage estimate and usage evaluation prompt
 - mission
 - acceptance criteria
 - verification
@@ -237,6 +250,7 @@ Integration Coordinator:
 
 - active contracts
 - ownership map
+- dependency graph or ready-node list when hybrid orchestration applies
 - sync checklist
 - dependency or drift notes
 
@@ -281,12 +295,15 @@ Required fields:
 - Security impact:
 - Assumptions:
 - Follow-up required:
+- System token usage:
+- Usage evaluation:
 ```
 
 Review and Security Review Agents may use their role-specific formats, but they must still include a clear status.
 
 If no files changed, write `Changed files: none`.
 If verification was not run, explain why and name the owner or condition needed to run it.
+If exact token counts are unavailable, report System token usage as Low, Medium, or High and explain the main context drivers.
 
 ## 9. Integration After Return
 
@@ -297,15 +314,18 @@ After a subagent returns, the orchestrator must:
 3. Confirm no forbidden paths, other workspaces, `.git/**`, real env files, or secrets were touched.
 4. Compare the output against acceptance criteria.
 5. Review verification commands and results.
-6. Decide whether Review Agent is needed.
-7. Decide whether Security Review Agent is needed.
-8. Update contracts, task docs, or handover notes if required.
-9. Record unresolved `Needs Confirmation` items.
-10. Avoid commit, branch, push, or PR work unless acting through Git Steward rules.
+6. Evaluate System token usage against the task value and context budget.
+7. Decide whether Review Agent is needed.
+8. Decide whether Security Review Agent is needed.
+9. Update contracts, task docs, or handover notes if required.
+10. Record unresolved `Needs Confirmation` items.
+11. Mark downstream dependency nodes `Ready` only when their prerequisites are satisfied.
+12. Start newly ready work without waiting for unrelated in-progress nodes when the workflow is hybrid.
+13. Avoid commit, branch, push, or PR work unless acting through Git Steward rules.
 
 When Git Steward work is required, load `docs/agent-rules/commits.md`, use `commit-workflow`, and classify shell/app changes before staging.
 
-For Full Delivery parallel work, run the relevant sync checklist before final handover:
+For Full Delivery hybrid or parallel work, run the relevant sync checklist before final handover:
 
 ```text
 docs/coordination/AGENT_SYNC_CHECKLIST.md

@@ -84,7 +84,7 @@ Use this when the user asks for a Spec, design, implementation plan, Task/Subtas
 
 ### Full Delivery Workflow
 
-Use the formal planning-through-development workflow only when the user explicitly asks the agent to own the work from initial planning through Spec writing and development, or when the user asks for end-to-end delivery or parallel multi-agent delivery.
+Use the formal planning-through-development workflow only when the user explicitly asks the agent to own the work from initial planning through Spec writing and development, or when the user asks for end-to-end delivery, hybrid orchestration, or parallel multi-agent delivery.
 
 A request for a Spec, implementation plan, handoff, or bounded subagent/delegation by itself does not switch the task into Full Delivery Workflow.
 
@@ -93,7 +93,8 @@ The Full Delivery Workflow may include:
 - initial planning and requirement clarification
 - Spec writing or update
 - Task/Subtask breakdown
-- contract-first coordination when multiple domains or agents are involved
+- dependency-aware hybrid orchestration when multiple domains or agents are involved
+- contract-first coordination before dependent implementation starts
 - implementation one Subtask at a time
 - Review Agent and Security Review Agent checks when applicable
 - explicit verification and handover
@@ -105,6 +106,7 @@ If Formal Planning or Full Delivery appears necessary for safety but the user di
 Load only the files needed for the current task:
 
 - Formal Planning and Full Delivery workflow details: [docs/agent-rules/workflow.md](./docs/agent-rules/workflow.md)
+- Dependency-aware hybrid orchestration: [docs/agent-rules/hybrid-orchestration.md](./docs/agent-rules/hybrid-orchestration.md)
 - Role definitions and multi-agent ownership: [docs/agent-rules/roles.md](./docs/agent-rules/roles.md)
 - Context budget and rule-loading discipline: [docs/agent-rules/context-budget.md](./docs/agent-rules/context-budget.md)
 - Subagent launch and integration protocol: [docs/agent-rules/subagent-execution.md](./docs/agent-rules/subagent-execution.md)

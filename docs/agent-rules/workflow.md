@@ -1,9 +1,9 @@
 # Workflow Rules
 
-Use this file only when the user asks for Formal Planning Workflow, Full Delivery Workflow, Spec or Task/Subtask creation, handoff, parallel multi-agent work, or an existing numbered Task sequence.
+Use this file only when the user asks for Formal Planning Workflow, Full Delivery Workflow, Spec or Task/Subtask creation, handoff, hybrid or parallel multi-agent work, or an existing numbered Task sequence.
 
 Ordinary questions, analysis, small edits, focused fixes, and routine implementation slices should stay in the Default Workflow from `AGENTS.md`.
-Bounded subagent or delegation requests can stay in Default Workflow unless they also require formal planning or parallel multi-agent delivery.
+Bounded subagent or delegation requests can stay in Default Workflow unless they also require formal planning, hybrid orchestration, or parallel multi-agent delivery.
 
 ## Workflow Selection
 
@@ -11,7 +11,7 @@ Default Workflow is the normal path.
 It does not require Spec, Task/Subtask, Review Agent, or handover artifacts unless the user explicitly asks for them.
 
 Full Delivery Workflow is opt-in.
-Use it when the user explicitly asks the agent to own the work from initial planning through Spec writing and development, or when the user asks for end-to-end delivery or parallel multi-agent delivery.
+Use it when the user explicitly asks the agent to own the work from initial planning through Spec writing and development, or when the user asks for end-to-end delivery, hybrid orchestration, or parallel multi-agent delivery.
 
 Formal Planning Workflow is also opt-in.
 Use it when the user asks for a Spec, design, implementation plan, Task/Subtask breakdown, handoff, or other planning artifact without asking the agent to implement the work.
@@ -49,12 +49,14 @@ Do not implement product changes unless the user explicitly approves moving into
 3. Review the Spec for scope, clarity, contradictions, missing requirements, and security concerns.
 4. Break the work into Tasks and Subtasks when useful.
 5. Confirm active workspace metadata for app-scoped implementation.
-6. Implement one Subtask at a time.
-7. Review each completed Subtask before moving to the next one.
-8. Run Security Review Agent checks when a security trigger applies.
-9. Fix issues and re-review when needed.
-10. Run explicit verification.
-11. Produce a concise completion report or handover when requested or when the work is part of an existing formal sequence.
+6. Use `docs/agent-rules/hybrid-orchestration.md` when the work is cross-domain, dependency-heavy, delegated, or Epic-sized.
+7. Build a dependency-aware execution graph before launching domain work.
+8. Implement one ready Subtask at a time, or launch independent ready Subtasks in parallel when their scopes and contracts do not overlap.
+9. Review completed Subtasks and unlock downstream work as soon as dependencies are satisfied.
+10. Run Security Review Agent checks when a security trigger applies.
+11. Fix issues and re-review when needed.
+12. Run explicit verification.
+13. Produce a concise completion report or handover when requested or when the work is part of an existing formal sequence.
 
 ## Spec Format
 
@@ -92,7 +94,7 @@ Use this format when a Task/Subtask document is needed:
 
 ## Handover Artifacts
 
-Create handover artifacts only when the user requested formal task tracking, when subagents or parallel work need durable coordination, or when the work is part of an existing numbered Task sequence.
+Create handover artifacts only when the user requested formal task tracking, when subagents or hybrid/parallel work need durable coordination, or when the work is part of an existing numbered Task sequence.
 
 Default paths for numbered formal work:
 
@@ -137,19 +139,23 @@ Git steward:
 
 Use `docs/agent-rules/workspaces.md` for workspace activation rules, `docs/agent-rules/context-budget.md` for compact subagent context loading, and `docs/agent-rules/subagent-execution.md` for subagent launch and integration rules.
 
-## Parallel Full Delivery
+## Hybrid Full Delivery
 
-Use contract-first coordination for approved parallel multi-agent work.
+Use dependency-aware hybrid orchestration for approved cross-domain or multi-agent work.
+Pure parallel work is allowed only when the active nodes have no blocking dependencies between them.
 
-1. Integration Coordinator drafts or updates relevant contracts under `docs/contracts/` or the active app's `.agent/contracts/`.
-2. Contracts are reviewed before parallel implementation begins.
-3. Task Agent decomposes work into domain-owned Subtasks.
-4. The orchestrator prepares bounded subagent task cards using `docs/agent-rules/subagent-execution.md`.
-5. Domain agents implement only inside their owned scope.
-6. The orchestrator integrates returned subagent output and checks scope, verification, and stop conditions.
-7. Integration Coordinator runs sync checks under `docs/coordination/`.
-8. Review Agent validates correctness and scope.
-9. Security Review Agent runs when triggered.
-10. Final verification and handover are produced.
+1. Root Orchestrator frames the Epic goal, scope, acceptance criteria, domains, risks, and initial dependency graph.
+2. Integration Coordinator drafts or updates relevant contracts under `docs/contracts/` or the active app's `.agent/contracts/`.
+3. Contracts are reviewed before dependent implementation begins.
+4. Task Agent or Domain Orchestrators decompose work into domain-owned nodes with explicit dependencies and unlocks.
+5. Root Orchestrator opens the first wave of ready nodes.
+6. Domain Orchestrators manage domain-local sequential or parallel worker execution.
+7. Domain agents implement only inside their owned scope.
+8. The orchestrator integrates returned output and checks scope, verification, stop conditions, and downstream unlocks.
+9. Newly ready downstream work may start immediately without waiting for unrelated in-progress nodes.
+10. Integration Coordinator runs sync checks under `docs/coordination/`.
+11. Review Agent validates correctness and scope.
+12. Security Review Agent runs when triggered.
+13. Final verification and handover are produced.
 
-Parallel implementation must not begin until relevant contracts are drafted and reviewed.
+Dependent implementation must not begin until relevant contracts are drafted and reviewed.

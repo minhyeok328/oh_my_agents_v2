@@ -101,6 +101,7 @@ docs/agent-rules/
 | 파일 | 목적 |
 | --- | --- |
 | `workflow.md` | Formal Planning, Full Delivery workflow, Spec/Task/Handover 형식 |
+| `hybrid-orchestration.md` | Root/Domain/Worker 계층과 dependency-aware hybrid orchestration 규칙 |
 | `roles.md` | agent 역할별 책임 |
 | `context-budget.md` | subagent 프롬프트를 작게 유지하는 방법 |
 | `subagent-execution.md` | subagent 호출, 중단, 출력, 통합 절차 |
@@ -110,6 +111,14 @@ docs/agent-rules/
 | `commits.md` | commit 안전 규칙과 Conventional Commits |
 
 agent는 모든 규칙을 한 번에 읽지 않고, 현재 작업에 필요한 규칙만 읽습니다.
+
+### System token usage
+
+System token usage는 API key, credential, auth token 같은 비밀값이 아닙니다.
+agent가 작업 전에 읽는 system/developer 지시, root 규칙, workflow 규칙, workspace profile, contract, task card, handover 같은 운영 context 비용을 뜻합니다.
+
+작은 작업은 필요한 파일만 읽고, Full Delivery나 hybrid 작업은 역할별로 필요한 규칙만 task card에 담습니다.
+정확한 token count를 볼 수 없으면 `Low`, `Medium`, `High`로 기록하고, subagent나 review가 끝난 뒤 다음 작업에서 줄일 수 있는 context를 평가합니다.
 
 ## Workspace Profile
 
@@ -187,7 +196,7 @@ Full Delivery 병렬 작업에서는 구현 agent가 시작하기 전에 contrac
 
 subagent는 기본 실행 방식이 아닙니다.
 처음 사용하는 경우에는 먼저 Default Workflow와 active workspace만 이해해도 충분합니다.
-subagent는 사용자가 명시적으로 요청했거나, Full Delivery 병렬 작업처럼 역할 분리의 이득이 분명할 때만 사용합니다.
+subagent는 사용자가 명시적으로 요청했거나, Full Delivery hybrid/병렬 작업처럼 역할 분리의 이득이 분명할 때만 사용합니다.
 
 workflow별 기본 기준은 다음과 같습니다.
 
@@ -195,9 +204,9 @@ workflow별 기본 기준은 다음과 같습니다.
 | --- | --- |
 | Default Workflow | 기본적으로 호출하지 않음. 사용자가 명시적으로 요청한 bounded delegation만 조건부로 사용합니다. |
 | Formal Planning Workflow | 일반적으로 호출하지 않음. 독립적인 조사나 리뷰가 명시적으로 요청된 경우에만 조건부로 사용합니다. |
-| Full Delivery Workflow | 조건부 호출. 병렬 multi-agent, domain-owned Subtask, review, security review, integration 작업에 사용합니다. |
+| Full Delivery Workflow | 조건부 호출. hybrid orchestration, 병렬 multi-agent, domain-owned Subtask, review, security review, integration 작업에 사용합니다. |
 
-Superpowers `spawn_agent`를 실제로 호출하려면 사용자가 subagent, delegation, parallel agent work를 명시적으로 요청해야 합니다.
+Superpowers `spawn_agent`를 실제로 호출하려면 사용자가 subagent, delegation, hybrid orchestration, parallel agent work를 명시적으로 요청해야 합니다.
 workflow 모드만으로 자동 호출하지 않습니다.
 
 구현 subagent에게는 가능한 한 작은 작업 카드를 전달합니다.
@@ -290,9 +299,10 @@ docs/templates/SUBAGENT_TASK_CARD.template.md
 docs/onboarding/examples/LOGIN_SUBAGENT_FLOW.ko.md
 ```
 
-병렬 작업:
+Hybrid/병렬 작업:
 
 ```text
+docs/agent-rules/hybrid-orchestration.md
 docs/templates/FULL_DELIVERY_START_CHECKLIST.md
 docs/coordination/PARALLEL_WORKFLOW.md
 docs/coordination/AGENT_SYNC_CHECKLIST.md
