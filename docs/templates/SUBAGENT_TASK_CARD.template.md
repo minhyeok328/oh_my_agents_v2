@@ -11,14 +11,16 @@ Follow `docs/agent-rules/subagent-execution.md` for launch gates, stop condition
 - Task / Subtask:
 - Role:
 - Workflow mode:
+- Hybrid node:
 
 ## Required Read Context
 
 - `AGENTS.md`
 - `docs/agent-rules/context-budget.md`
+- `docs/agent-rules/hybrid-orchestration.md` when the task is a dependency node in hybrid work
 - `docs/agent-rules/subagent-execution.md`
-- `docs/agent-rules/workspaces.md`
-- Workspace profile:
+- docs/agent-rules/workspaces.md when app-scoped
+- Workspace profile, when app-scoped:
 - Spec/Subtask:
 - Contracts:
 
@@ -41,6 +43,26 @@ Follow `docs/agent-rules/subagent-execution.md` for launch gates, stop condition
 ## Mission
 
 -
+
+## Dependencies And Unlocks
+
+- Prerequisites:
+- Starts when:
+- Unlocks when complete:
+- Blocking dependencies:
+
+## System Token Usage
+
+- Estimate: Low / Medium / High / exact count if available
+- Main context drivers:
+- Context intentionally omitted:
+
+## Usage Evaluation
+
+- Was the loaded context necessary for safety?
+- Could any full document have been summarized instead?
+- Did this delegation reduce risk, review cost, or coordination overhead enough to justify the context?
+- Trim or keep next time:
 
 ## Acceptance Criteria
 
@@ -79,6 +101,9 @@ Stop and report if:
 - Verification:
 - Contract impact:
 - Security impact:
+- Unlocks:
+- System token usage:
+- Usage evaluation:
 - Assumptions:
 - Follow-up required:
   - Git steward required: yes/no/Needs Confirmation

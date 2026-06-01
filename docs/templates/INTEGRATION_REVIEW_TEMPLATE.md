@@ -1,6 +1,6 @@
 # Integration Review Template
 
-Use at sync points to confirm parallel work converged correctly.
+Use at sync points to confirm hybrid or parallel work converged correctly.
 
 ## Metadata
 
@@ -43,6 +43,14 @@ Use at sync points to confirm parallel work converged correctly.
 - Commands executed:
 - Results:
 - Gaps / Not applicable:
+
+## Token Usage
+
+- Token usage and evaluation:
+- Exact counts available: yes/no
+- Highest-usage prompt or handover:
+- Was the context cost justified by safety, contract, security, or integration needs?
+- Context to trim or keep next time:
 
 ## Findings (Structured)
 

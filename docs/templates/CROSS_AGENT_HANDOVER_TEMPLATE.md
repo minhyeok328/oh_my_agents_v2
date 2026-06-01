@@ -1,6 +1,6 @@
 # Cross-Agent Handover Template
 
-Use this handover when passing work across domain agents during parallel execution.
+Use this handover when passing work across domain agents during hybrid or parallel execution.
 
 ## Context
 
@@ -37,6 +37,15 @@ Use this handover when passing work across domain agents during parallel executi
 
 - Commands run + results:
 - Not run (and why):
+
+## Token Usage
+
+- Token usage notes:
+- Exact count if available:
+- Estimate if count is unavailable: Low / Medium / High
+- Evaluation:
+  - Necessary context:
+  - Context that can be trimmed next time:
 
 ## Risks / Security Notes
 

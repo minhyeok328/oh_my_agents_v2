@@ -61,7 +61,7 @@ Generated or heavy paths to avoid:
 
 - Contract directory:
 - Active contract naming pattern:
-- Shared interface contracts required before parallel work:
+- Shared interface contracts required before hybrid or parallel work:
   - API:
   - DB:
   - Frontend/backend:
