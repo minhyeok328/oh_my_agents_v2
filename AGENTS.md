@@ -57,6 +57,9 @@ If a task appears to require access outside the workspace, stop and ask for expl
 Project file work must stay inside this workspace.
 Platform-provided tools, plugin metadata, and installed skills may live outside the workspace; agents may read or invoke them when required by higher-priority system or developer instructions, or when the user explicitly asks to install or use them.
 This exception does not permit reading unrelated user files, editing non-tool files outside the workspace, or weakening the Workspace Boundary rules above.
+Agents and subagents should choose relevant installed skills from the assigned task, role, and risk surface.
+An orchestrator may list required, suggested, or excluded skills in a task card, but each subagent remains responsible for invoking any applicable skill and reporting which skills were used.
+Skill use must stay inside the assigned scope and must not broaden workspace access, Git authority, security authority, or verification responsibilities.
 
 ## Workflow Modes
 
