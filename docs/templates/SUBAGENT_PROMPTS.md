@@ -16,6 +16,8 @@ Before using any prompt:
 - Fill and review the relevant `docs/contracts/*` "Parallel Start Minimum" sections.
 - Assign one primary domain owner per Subtask.
 - Mark dependency prerequisites and downstream unlocks for each hybrid node.
+- Include required, suggested, and excluded skill guidance only when useful; otherwise tell the subagent to choose relevant installed skills by role and mission.
+- Every prompt output must include `Skills used:` with `none` when no task-specific skills were loaded.
 - Token usage and evaluation must be included in every prompt output: exact counts when available, otherwise Low/Medium/High plus a short trim/keep judgment.
 - Prefer `docs/templates/SUBAGENT_TASK_CARD.template.md` for compact implementation launches.
 
