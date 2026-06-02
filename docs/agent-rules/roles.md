@@ -21,6 +21,7 @@ Responsibilities:
 - open ready work waves and unlock downstream work when dependencies are satisfied
 - coordinate blockers, scope creep, security review triggers, and integration decisions
 - track token usage and evaluation when context cost changes orchestration choices
+- define skill policy for delegated task cards without forcing unrelated skills into context
 - act as the single user-facing reporting channel
 - mark final completion only after verification, scope control, and required reviews pass
 
@@ -40,6 +41,7 @@ Responsibilities:
 - break domain scope into worker-owned nodes
 - choose domain-local sequential or parallel execution
 - prepare or request bounded task cards for domain workers
+- include required, suggested, and excluded skill guidance in worker cards when useful
 - maintain domain status, blockers, verification evidence, and downstream unlocks
 - report token usage and evaluation for domain prompts, worker cards, and returned outputs
 - escalate contract drift, security triggers, scope conflicts, and cross-domain impact to Root
@@ -81,6 +83,7 @@ Responsibilities:
 - define dependencies and execution order
 - write completion criteria and verification steps
 - define expected system token usage and usage evaluation for each task card when subagents are used
+- include skill selection guidance so each subagent can decide which installed skills apply
 - ensure every unit of work stays inside the workspace boundary
 
 ### Implementation Agent
@@ -96,7 +99,7 @@ Responsibilities:
 - avoid unrelated refactors
 - avoid Git commands, commits, branches, pushes, and Git metadata changes unless explicitly assigned as Git work
 - run relevant local checks
-- report changed files, implementation decisions, checks, token usage evaluation, and known limitations
+- report changed files, skills used, implementation decisions, checks, token usage evaluation, and known limitations
 
 ### Review Agent
 
@@ -108,6 +111,7 @@ Responsibilities:
 - verify acceptance criteria
 - check unrelated behavior was not changed
 - review edge cases, failure paths, missing tests, maintainability, and security-sensitive changes
+- use relevant review skills when they apply, and report which skills were used
 - require fixes for blocking issues before approval
 
 ## Extended Roles
@@ -146,6 +150,7 @@ Extended roles refine implementation ownership. They do not weaken core workflow
 ### Security Review Agent
 
 - Runs the security checklist when triggered.
+- Uses relevant security review skills when they apply.
 - Is additive and does not replace Review Agent.
 - Must stop and escalate on Blocker security findings.
 
@@ -163,6 +168,7 @@ Extended roles refine implementation ownership. They do not weaken core workflow
 
 - Owns Git boundary checks, commit planning, branch, push, and PR preparation when explicitly assigned.
 - Must load `docs/agent-rules/commits.md` before commit work.
+- Must use `commit-workflow` when staging, splitting, writing commit messages, rewriting commits, or creating commits.
 - Must separate shell-governance changes from app-workspace changes.
 - Must not implement product or governance changes while acting only as Git Steward Agent.
 - Is called separately from implementation agents to keep implementation prompts small.
