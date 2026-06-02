@@ -70,6 +70,7 @@ Workspace status:
 - [ ] Subagents will receive compact task cards with owned outcomes and checkpoint expectations instead of full planning packets.
 - [ ] Domain Orchestrators will receive `docs/templates/DOMAIN_ORCHESTRATOR_CARD.template.md` when a separate domain orchestration layer is used.
 - [ ] Required rule files are selected by role.
+- [ ] Required, suggested, and excluded skills are defined only when useful; otherwise subagents will choose relevant installed skills by role.
 - [ ] Hybrid orchestration rules are selected when dependency-aware waves apply: `docs/agent-rules/hybrid-orchestration.md`.
 - [ ] Subagent launch and integration rules are selected: `docs/agent-rules/subagent-execution.md`.
 - [ ] Security checklist is loaded only if a security trigger applies.
@@ -80,6 +81,7 @@ Context notes:
 
 - Subagent card template:
 - Domain Orchestrator card template:
+- Skill policy:
 - Full docs required:
 - Summaries prepared:
 
@@ -89,6 +91,7 @@ Context notes:
 - [ ] Exact counts will be used when available; otherwise each prompt is estimated as Low, Medium, or High.
 - [ ] High-usage prompts have a reason tied to safety, contracts, security, or integration risk.
 - [ ] Each delegated task card includes context intentionally omitted.
+- [ ] Skill instructions are counted only after a subagent loads the relevant skill.
 - [ ] Usage evaluation will be collected from every returning subagent, reviewer, and orchestrator.
 - [ ] The final handover will state what context should be trimmed or kept next time.
 
