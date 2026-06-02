@@ -1,19 +1,22 @@
 ---
 name: commit-workflow
-description: Use when the user asks to create git commits, stage changes, split or rewrite commits, or write commit messages.
+description: Use when creating git commits, rewriting or splitting commits, staging changes, or writing commit messages. Requires Codex to inspect every changed file before staging, split commits by logical scope, avoid lump commits, and write scoped English conventional commit messages.
 ---
 
 # Commit Workflow
 
-Use this skill whenever the user asks to create one or more git commits, stage changes, split or rewrite commits, or write commit messages.
+Use this skill whenever the user asks to create one or more git commits.
 
-## Required Workflow
+- **Only commit when the user explicitly asks.** Do not commit proactively after making changes.
+- **Commit messages stay in English** (conventional `type(scope): summary`), regardless of the chat language.
+
+## Required workflow
 
 1. Inspect the working tree and files before staging:
    - Run `git status --short`.
    - Enumerate changed and untracked files with `rg --files`, `git diff --name-status`, `git show --name-status`, or targeted directory listing as appropriate.
    - Read every changed file that may be committed, either through `git diff`, `git diff --cached`, `git show`, targeted file reads, or file metadata tools for binary assets.
-   - For untracked directories, inspect the file list and read representative source, config, docs, or templates before staging.
+   - For untracked directories, inspect the file list and read representative source/config/docs/templates before staging.
    - Identify which changes belong to the user's request and which appear unrelated.
    - Do not stage or commit based only on filenames.
 
@@ -31,7 +34,8 @@ Use this skill whenever the user asks to create one or more git commits, stage c
 
 4. Write commit messages in English:
    - Both the commit header and body must be English.
-   - Always use a concise conventional-style header with an explicit scope: `type(scope): summary`.
+   - Always use a concise conventional-style header with an explicit scope:
+     `type(scope): summary`
    - Choose a clear scope that matches the changed area.
    - Do not create unscoped headers such as `type: summary`.
    - Add a body when it helps explain why the change was made, notable behavior, or migration/setup impact.
@@ -41,7 +45,7 @@ Use this skill whenever the user asks to create one or more git commits, stage c
    - Run `git status --short`.
    - Tell the user about any remaining uncommitted changes.
 
-## Commit Message Examples
+## Commit message examples
 
 ```text
 chore(config): add Django project dependencies
