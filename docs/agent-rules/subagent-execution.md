@@ -4,6 +4,7 @@ Use this file when the main Codex session prepares, launches, receives, or integ
 Use `docs/agent-rules/hybrid-orchestration.md` first when subagents are part of dependency-aware Epic or cross-domain work.
 
 Subagents do not choose their own workspace, write scope, Git behavior, or verification strategy.
+Subagents do choose which installed skills apply to their assigned task unless the task card explicitly marks a skill as required or excluded.
 The main Codex session acts as the orchestrator and must launch subagents with a bounded task card.
 If boundaries are unclear, the subagent stops and reports `Needs Confirmation` instead of guessing.
 
@@ -76,6 +77,7 @@ Before launching a subagent, it must:
 - identify dependency nodes, prerequisites, and downstream unlocks when hybrid orchestration applies
 - decide whether security review is triggered
 - decide whether Git Steward work is required
+- define the skill policy for the task card: required skills, suggested skills, and excluded skills when applicable
 - estimate System token usage and define the Usage evaluation expected from the subagent
 - create or fill a Subagent Task Card
 - keep the user informed during long-running work
@@ -140,6 +142,7 @@ A subagent may start only when:
 - allowed write scope is explicit
 - forbidden paths are explicit
 - verification command is defined or marked `Needs Confirmation`
+- skill selection policy is explicit, even if it says `Required: none` and `Suggested: choose by role`
 - System token usage estimate is recorded as Low, Medium, High, or exact count when available
 - Usage evaluation is required in the return output
 - stop conditions are included
@@ -176,6 +179,7 @@ Required fields:
 - role
 - dependency prerequisites and unlocks when hybrid orchestration applies
 - required read context
+- skill selection guidance
 - allowed write scope
 - read-only context
 - forbidden paths
@@ -192,7 +196,23 @@ Summarize the relevant rule in 5-10 lines and cite the file path.
 
 The task card must not expand the root workspace boundary or weaken any rule from `AGENTS.md`.
 
-## 5. Cross-Agent Communication
+## 5. Skill Selection
+
+Subagents are responsible for deciding which installed skills apply to their assigned task.
+The orchestrator should provide skill guidance without pasting full skill bodies into the task card.
+
+Use this policy:
+
+- Required skills: use only when the user, root rules, task card, or role-specific rule explicitly requires the skill.
+- Suggested skills: list likely relevant skills by name, but the subagent still decides whether each one applies.
+- Excluded skills: list skills that would broaden scope, trigger the wrong workflow, or duplicate another assigned role.
+- Additional skills: the subagent may use another installed skill if it clearly applies to the task and does not expand scope.
+- Conflict handling: if a required skill appears inapplicable or conflicts with higher-priority instructions, stop and report `Needs Confirmation`.
+
+Skill selection must not change the assigned workspace, write scope, Git authority, security review authority, or verification owner.
+Each subagent must report `Skills used:` in its output.
+
+## 6. Cross-Agent Communication
 
 Subagents should not coordinate through private, untracked assumptions.
 Cross-agent information must flow through the orchestrator or Integration Coordinator by default.
@@ -218,7 +238,7 @@ Direct worker-to-worker communication is allowed only when the orchestrator expl
 The result must be reported back to the orchestrator.
 If the answer changes shared behavior, update the contract first and relaunch affected task cards.
 
-## 6. Role-Specific Inputs
+## 7. Role-Specific Inputs
 
 Add role-specific input to the task card.
 
@@ -263,7 +283,7 @@ Git Steward Agent:
 - staging or PR intent
 - workspace profile Git Pointer for app-scoped work
 
-## 7. Stop Conditions
+## 8. Stop Conditions
 
 A subagent must stop and report `Needs Confirmation` when:
 
@@ -280,7 +300,7 @@ A subagent must stop and report `Needs Confirmation` when:
 Stopping is the correct behavior when boundaries are unclear.
 Do not broaden scope silently.
 
-## 8. Required Output
+## 9. Required Output
 
 Every subagent must return a compact, reviewable output.
 
@@ -290,6 +310,7 @@ Required fields:
 - Status: Completed | Blocked | Needs Confirmation
 - Changed files:
 - Summary:
+- Skills used:
 - Verification:
 - Contract impact:
 - Security impact:
@@ -302,10 +323,11 @@ Required fields:
 Review and Security Review Agents may use their role-specific formats, but they must still include a clear status.
 
 If no files changed, write `Changed files: none`.
+If no skills were used beyond always-on instructions, write `Skills used: none`.
 If verification was not run, explain why and name the owner or condition needed to run it.
 If exact token counts are unavailable, report System token usage as Low, Medium, or High and explain the main context drivers.
 
-## 9. Integration After Return
+## 10. Integration After Return
 
 After a subagent returns, the orchestrator must:
 
@@ -313,15 +335,16 @@ After a subagent returns, the orchestrator must:
 2. Confirm changed files stayed inside the allowed scope.
 3. Confirm no forbidden paths, other workspaces, `.git/**`, real env files, or secrets were touched.
 4. Compare the output against acceptance criteria.
-5. Review verification commands and results.
-6. Evaluate System token usage against the task value and context budget.
-7. Decide whether Review Agent is needed.
-8. Decide whether Security Review Agent is needed.
-9. Update contracts, task docs, or handover notes if required.
-10. Record unresolved `Needs Confirmation` items.
-11. Mark downstream dependency nodes `Ready` only when their prerequisites are satisfied.
-12. Start newly ready work without waiting for unrelated in-progress nodes when the workflow is hybrid.
-13. Avoid commit, branch, push, or PR work unless acting through Git Steward rules.
+5. Check `Skills used:` against the task card's required, suggested, and excluded skill policy.
+6. Review verification commands and results.
+7. Evaluate System token usage against the task value and context budget.
+8. Decide whether Review Agent is needed.
+9. Decide whether Security Review Agent is needed.
+10. Update contracts, task docs, or handover notes if required.
+11. Record unresolved `Needs Confirmation` items.
+12. Mark downstream dependency nodes `Ready` only when their prerequisites are satisfied.
+13. Start newly ready work without waiting for unrelated in-progress nodes when the workflow is hybrid.
+14. Avoid commit, branch, push, or PR work unless acting through Git Steward rules.
 
 When Git Steward work is required, load `docs/agent-rules/commits.md`, use `commit-workflow`, and classify shell/app changes before staging.
 
