@@ -70,7 +70,7 @@ agent는 이 active workspace와 배정된 write scope 안에서만 구현해야
 | [context-budget.md](./docs/agent-rules/context-budget.md) | subagent context를 작게 유지하는 규칙 |
 | [subagent-execution.md](./docs/agent-rules/subagent-execution.md) | subagent 호출, 중단, 출력, 통합 절차 |
 | [commits.md](./docs/agent-rules/commits.md) | Git Steward와 commit-workflow 규칙 |
-| [commit-workflow skill](./docs/skills/commit-workflow/SKILL.md) | 전역 skill로 설치할 수 있는 commit workflow 원본 |
+| [repo-managed skills](./docs/skills) | 오케스트레이션 안정화를 위해 전역 skill로 설치할 수 있는 skill 원본 |
 
 ## 주요 템플릿
 
@@ -96,7 +96,13 @@ Git Steward가 staging 전에 변경 대상을 볼 때는 `scripts/classify-git-
 
 ## Skill 설치
 
-`commit-workflow` 전역 skill은 repo 안의 원본을 기준으로 설치합니다.
+오케스트레이션 안정화용 전역 skills는 repo 안의 `docs/skills/` 원본을 기준으로 설치합니다.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-skills.ps1
+```
+
+`commit-workflow`만 갱신해야 할 때는 기존 단일 설치 스크립트를 사용할 수 있습니다.
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-commit-workflow.ps1
@@ -111,6 +117,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-commit-wor
 - 큰 Full Delivery 작업은 기본적으로 hybrid orchestration으로 보고, dependency가 풀린 작업부터 순차+병렬로 진행합니다.
 - subagent와 Superpowers `spawn_agent`는 기본 실행 경로가 아니며, 사용자가 subagent, delegation, hybrid orchestration, 또는 parallel agent work를 명시적으로 요청했을 때만 사용합니다.
 - subagent는 스스로 workspace, write scope, Git 동작, 검증 방식을 정하지 않습니다.
+- subagent는 task card의 필수/추천/제외 skill 안내를 기준으로, 자기 역할과 작업 성격에 맞는 installed skill을 스스로 판단해 사용하고 결과에 보고합니다.
 - 구현 subagent는 Git 명령을 실행하지 않습니다.
 - Git 작업은 [commit-workflow skill](./docs/skills/commit-workflow/SKILL.md)과 Git Steward 규칙을 사용합니다.
 - 보안, auth, DB, 파일, 외부 API, dependency, config 작업은 Security Review Agent 조건을 확인합니다.
