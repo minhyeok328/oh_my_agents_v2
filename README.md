@@ -64,6 +64,7 @@ agent는 이 active workspace와 배정된 write scope 안에서만 구현해야
 | --- | --- |
 | [AGENTS.md](./AGENTS.md) | 에이전트가 항상 따라야 하는 운영 원문 |
 | [USER_GUIDE.ko.md](./docs/onboarding/USER_GUIDE.ko.md) | 처음 사용자를 위한 단순 사용 설명서 |
+| [SYSTEM_ARCHITECTURE.ko.md](./docs/onboarding/SYSTEM_ARCHITECTURE.ko.md) | 전체 오케스트레이션 구조와 역할 흐름 |
 | [workflow.md](./docs/agent-rules/workflow.md) | Formal Planning, Full Delivery workflow, Spec/Task/Handover 형식 |
 | [hybrid-orchestration.md](./docs/agent-rules/hybrid-orchestration.md) | Root/Domain/Worker 계층과 dependency-aware hybrid orchestration 규칙 |
 | [workspaces.md](./docs/agent-rules/workspaces.md) | active workspace와 작업 경계 |
