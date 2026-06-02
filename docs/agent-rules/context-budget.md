@@ -36,6 +36,7 @@ The evaluation should answer:
 - Was each loaded rule file or prompt section necessary for safety?
 - Could any large context have been replaced with a summary plus file reference?
 - Did a subagent receive enough context to act without receiving unrelated history?
+- Did the task card give enough skill guidance without forcing unrelated skill bodies into context?
 - Did the extra context reduce risk, review cost, or coordination overhead enough to justify its size?
 - What should be trimmed or kept for the next related task?
 
@@ -70,6 +71,20 @@ Load detailed rules only when the role or task needs them:
 
 If a rule file is not needed for the current role, reference it by path only or omit it.
 
+## Skill Loading
+
+Subagents should select relevant installed skills from their assigned role, mission, risk surface, and task card guidance.
+The orchestrator should include skill names and intent, not full skill bodies, unless the exact skill text is needed for a fragile gate.
+
+Task cards should distinguish:
+
+- Required skills: must be used unless they conflict with higher-priority instructions.
+- Suggested skills: likely useful, but the subagent decides whether they apply.
+- Excluded skills: do not use because they would broaden scope or duplicate another role.
+
+Skill instructions count toward System token usage after they are loaded.
+Subagents must include `Skills used:` and a short usage evaluation in their output.
+
 ## Subagent Context Capsule
 
 Implementation subagents should usually receive a compact task card, not the full planning packet.
@@ -83,6 +98,7 @@ Minimum fields:
 - role
 - Subtask reference
 - dependency prerequisites and unlocks when hybrid orchestration applies
+- required, suggested, or excluded skill guidance
 - system token usage estimate and evaluation requirement
 - allowed write scope
 - read-only context
@@ -114,6 +130,7 @@ Implementation agents should receive these reminders unless the Task explicitly 
 Subagent output should be concise and reviewable:
 
 - changed files
+- skills used
 - decisions made
 - verification commands and results
 - downstream unlocks or blocked dependencies when hybrid orchestration applies
