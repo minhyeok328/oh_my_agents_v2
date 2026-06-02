@@ -36,6 +36,8 @@ secret_agents_v2/               # governance control plane / 운영 셸
 
 간단히 말하면, `secret_agents_v2`는 작업 운영 환경이고 `workspaces/my-app`은 실제로 고칠 앱입니다.
 
+전체 역할과 gate 흐름을 그림으로 보고 싶다면 [시스템 아키텍처](./SYSTEM_ARCHITECTURE.ko.md)를 참고하세요.
+
 ## 핵심 개념
 
 agent가 제품 코드를 바꾸기 전에 다음 질문에 답할 수 있어야 합니다.
