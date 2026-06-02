@@ -24,6 +24,13 @@ Follow `docs/agent-rules/subagent-execution.md` for launch gates, stop condition
 - Spec/Subtask:
 - Contracts:
 
+## Skill Selection
+
+- Required skills:
+- Suggested skills:
+- Excluded skills:
+- Decision rule: Use any installed skill that clearly applies to this role and mission, unless it is excluded or would expand scope.
+
 ## Allowed Write Scope
 
 -
@@ -98,6 +105,7 @@ Stop and report if:
 - Status: Completed | Blocked | Needs Confirmation
 - Changed files:
 - Summary:
+- Skills used:
 - Verification:
 - Contract impact:
 - Security impact:
