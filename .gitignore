@@ -25,6 +25,14 @@ coverage/
 # App workspaces are managed as separate Git repositories
 /workspaces/*
 !/workspaces/README.md
+!/workspaces/sample-app/
+!/workspaces/sample-app/.agent/
+!/workspaces/sample-app/.agent/**
+!/workspaces/sample-app/package.json
+!/workspaces/sample-app/src/
+!/workspaces/sample-app/src/**
+!/workspaces/sample-app/tests/
+!/workspaces/sample-app/tests/**
 
 # OS and editor files
 .DS_Store
