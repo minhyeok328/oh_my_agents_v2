@@ -155,13 +155,13 @@ function Test-RealEnvFilesNotTracked {
     }
 }
 
-function Invoke-ProjectCheck($scriptPath) {
+function Invoke-ProjectCheck($scriptPath, $arguments = @()) {
     if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
         Fail "missing project check script: $scriptPath"
         return
     }
 
-    & powershell -NoProfile -ExecutionPolicy Bypass -File $scriptPath
+    & powershell -NoProfile -ExecutionPolicy Bypass -File $scriptPath @arguments
     if ($LASTEXITCODE -ne 0) {
         Fail "project check failed: $scriptPath"
         return
@@ -175,6 +175,7 @@ $requiredFiles = @(
     "AGENTS.md",
     "README.md",
     "docs/onboarding/USER_GUIDE.ko.md",
+    "docs/onboarding/WORKSPACE_SETUP_REQUEST.ko.md",
     "docs/onboarding/examples/LOGIN_SUBAGENT_FLOW.ko.md",
     "docs/agent-rules/workflow.md",
     "docs/agent-rules/hybrid-orchestration.md",
@@ -205,10 +206,22 @@ $requiredFiles = @(
     "docs/fixtures/dry-run/README.md",
     "scripts/classify-git-target.ps1",
     "scripts/check-contracts.ps1",
+    "scripts/check-delivery-readiness.ps1",
+    "scripts/test-delivery-readiness.ps1",
+    "scripts/check-workspace-manifest.ps1",
     "scripts/check-workspace-profile.ps1",
     "scripts/check-orchestration.ps1",
     "scripts/install-skills.ps1",
     "scripts/install-commit-workflow.ps1",
+    "docs/fixtures/dry-run/valid/SUBAGENT_TASK_CARD.filled.md",
+    "docs/fixtures/dry-run/valid/FULL_DELIVERY_START_CHECKLIST.filled.md",
+    "docs/fixtures/dry-run/valid/API_CONTRACT.active.md",
+    "docs/fixtures/dry-run/invalid/SUBAGENT_TASK_CARD.other-workspace.md",
+    "docs/fixtures/dry-run/invalid/FULL_DELIVERY_START_CHECKLIST.blocked.md",
+    "workspaces/sample-app/package.json",
+    "workspaces/sample-app/.agent/profile.md",
+    "workspaces/sample-app/.agent/manifest.yml",
+    "workspaces/sample-app/.agent/contracts/API_CONTRACT.md",
     "workspaces/README.md"
 )
 
@@ -245,6 +258,7 @@ $requiredTextChecks = @(
     @{ Path = "README.md"; Text = "Markdown links" },
     @{ Path = "README.md"; Text = "secret-like values" },
     @{ Path = "README.md"; Text = "docs/onboarding/USER_GUIDE.ko.md" },
+    @{ Path = "README.md"; Text = "docs/onboarding/WORKSPACE_SETUP_REQUEST.ko.md" },
     @{ Path = "README.md"; Text = "docs/agent-rules/hybrid-orchestration.md" },
     @{ Path = "README.md"; Text = "workspaces/README.md" },
     @{ Path = "README.md"; Text = "spawn_agent" },
@@ -256,6 +270,9 @@ $requiredTextChecks = @(
     @{ Path = "README.md"; Text = "classify-git-target.ps1" },
     @{ Path = "README.md"; Text = "check-orchestration.ps1" },
     @{ Path = "README.md"; Text = "check-contracts.ps1" },
+    @{ Path = "README.md"; Text = "check-delivery-readiness.ps1" },
+    @{ Path = "README.md"; Text = "check-workspace-manifest.ps1" },
+    @{ Path = "README.md"; Text = "manifest.yml" },
     @{ Path = "README.md"; Text = "DOMAIN_ORCHESTRATOR_CARD.template.md" },
     @{ Path = "AGENTS.md"; Text = "docs/agent-rules/context-budget.md" },
     @{ Path = "AGENTS.md"; Text = "docs/agent-rules/hybrid-orchestration.md" },
@@ -264,6 +281,9 @@ $requiredTextChecks = @(
     @{ Path = "AGENTS.md"; Text = "commit-workflow" },
     @{ Path = "AGENTS.md"; Text = "Agents and subagents should choose relevant installed skills" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "subagent-execution.md" },
+    @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "WORKSPACE_SETUP_REQUEST.ko.md" },
+    @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = ".agent/manifest.yml" },
+    @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "check-workspace-manifest.ps1" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "# secret_agents_v2" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "v2 difference" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "Markdown links" },
@@ -389,7 +409,13 @@ $requiredTextChecks = @(
     @{ Path = "docs/fixtures/dry-run/README.md"; Text = "Git target: shell | active app | none | Needs Confirmation" },
     @{ Path = "docs/fixtures/dry-run/README.md"; Text = "check-orchestration.ps1" },
     @{ Path = "docs/fixtures/dry-run/README.md"; Text = "check-contracts.ps1" },
+    @{ Path = "docs/fixtures/dry-run/README.md"; Text = "check-delivery-readiness.ps1" },
+    @{ Path = "docs/fixtures/dry-run/README.md"; Text = "test-delivery-readiness.ps1" },
+    @{ Path = "docs/fixtures/dry-run/README.md"; Text = "workspaces/sample-app/.agent/profile.md" },
+    @{ Path = "docs/fixtures/dry-run/README.md"; Text = "workspaces/sample-app/.agent/manifest.yml" },
     @{ Path = "workspaces/README.md"; Text = "Active workspace: workspaces/<app-slug>" },
+    @{ Path = "workspaces/README.md"; Text = "workspaces/sample-app" },
+    @{ Path = "workspaces/README.md"; Text = ".agent/manifest.yml" },
     @{ Path = "workspaces/README.md"; Text = "secret_agents_v2" },
     @{ Path = "workspaces/README.md"; Text = "profile.md is authoritative" },
     @{ Path = "workspaces/README.md"; Text = "app-local AGENTS.md is optional" },
@@ -398,10 +424,21 @@ $requiredTextChecks = @(
     @{ Path = "workspaces/README.md"; Text = "commit-workflow" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "profile.md is authoritative" },
     @{ Path = "docs/onboarding/USER_GUIDE.ko.md"; Text = "app-local AGENTS.md is optional" },
+    @{ Path = "docs/onboarding/WORKSPACE_SETUP_REQUEST.ko.md"; Text = 'Active workspace: workspaces/my-app' },
+    @{ Path = "docs/onboarding/WORKSPACE_SETUP_REQUEST.ko.md"; Text = '.agent/profile.md' },
+    @{ Path = "docs/onboarding/WORKSPACE_SETUP_REQUEST.ko.md"; Text = '.agent/manifest.yml' },
+    @{ Path = "docs/onboarding/WORKSPACE_SETUP_REQUEST.ko.md"; Text = 'check-workspace-profile.ps1' },
+    @{ Path = "docs/onboarding/WORKSPACE_SETUP_REQUEST.ko.md"; Text = 'check-workspace-manifest.ps1' },
+    @{ Path = "docs/onboarding/WORKSPACE_SETUP_REQUEST.ko.md"; Text = 'profile.md   =' },
+    @{ Path = "docs/onboarding/WORKSPACE_SETUP_REQUEST.ko.md"; Text = 'manifest.yml =' },
     @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\check-workspace-profile.ps1"' },
+    @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\check-workspace-profile.ps1" @("-ProfilePath", "workspaces/sample-app/.agent/profile.md")' },
+    @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\check-workspace-manifest.ps1"' },
     @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\classify-git-target.ps1"' },
     @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\check-orchestration.ps1"' },
-    @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\check-contracts.ps1"' }
+    @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\check-contracts.ps1"' },
+    @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\check-delivery-readiness.ps1"' },
+    @{ Path = "scripts/check-docs.ps1"; Text = 'Invoke-ProjectCheck ".\scripts\test-delivery-readiness.ps1"' }
 )
 
 foreach ($check in $requiredTextChecks) {
@@ -412,9 +449,13 @@ if (-not $failed) {
 }
 
 Invoke-ProjectCheck ".\scripts\check-workspace-profile.ps1"
+Invoke-ProjectCheck ".\scripts\check-workspace-profile.ps1" @("-ProfilePath", "workspaces/sample-app/.agent/profile.md")
+Invoke-ProjectCheck ".\scripts\check-workspace-manifest.ps1"
 Invoke-ProjectCheck ".\scripts\classify-git-target.ps1"
 Invoke-ProjectCheck ".\scripts\check-orchestration.ps1"
 Invoke-ProjectCheck ".\scripts\check-contracts.ps1"
+Invoke-ProjectCheck ".\scripts\check-delivery-readiness.ps1"
+Invoke-ProjectCheck ".\scripts\test-delivery-readiness.ps1"
 
 $markdownFiles = @(
     (Get-TrackedMarkdownFiles) +
