@@ -1,0 +1,24 @@
+version: 1
+
+workspace:
+  slug: sample-app
+  active_root: workspaces/sample-app
+  profile: workspaces/sample-app/.agent/profile.md
+
+contracts:
+  root: workspaces/sample-app/.agent/contracts
+  api: workspaces/sample-app/.agent/contracts/API_CONTRACT.md
+
+verification:
+  smoke_cwd: workspaces/sample-app
+  smoke_command: npm.cmd test
+  full_cwd: workspaces/sample-app
+  full_command: npm.cmd test
+
+git:
+  mode: shell-owned
+  steward_required: true
+  implementation_agents_may_run_git: false
+
+security:
+  real_env_files_forbidden: .env,.env.local
