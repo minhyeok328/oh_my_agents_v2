@@ -38,8 +38,32 @@ function Test-UnderRepo($fullPath) {
     }
 }
 
+function Get-RelativePathUnderRepo($fullPath) {
+    $repoFullPath = [System.IO.Path]::GetFullPath($repoRoot)
+    if (-not $repoFullPath.EndsWith([System.IO.Path]::DirectorySeparatorChar)) {
+        $repoFullPath = $repoFullPath + [System.IO.Path]::DirectorySeparatorChar
+    }
+
+    $normalizedFullPath = [System.IO.Path]::GetFullPath($fullPath)
+    if ($normalizedFullPath.StartsWith($repoFullPath, [System.StringComparison]::OrdinalIgnoreCase)) {
+        return $normalizedFullPath.Substring($repoFullPath.Length)
+    }
+
+    return $normalizedFullPath
+}
+
+function Get-FieldValue($content, $label) {
+    $escaped = [regex]::Escape($label)
+    $match = [regex]::Match($content, "(?m)^\s*-\s+$escaped\s*:\s*(.+?)\s*$")
+    if ($match.Success) {
+        return $match.Groups[1].Value.Trim(" ", "`t", "`r", "`n", "`"")
+    }
+
+    return ""
+}
+
 function Test-AppProfilePath($fullPath) {
-    $relativePath = [System.IO.Path]::GetRelativePath($repoRoot, $fullPath)
+    $relativePath = Get-RelativePathUnderRepo $fullPath
     $normalized = $relativePath.Replace("/", "\")
 
     if (-not $normalized.StartsWith("workspaces\", [System.StringComparison]::OrdinalIgnoreCase)) {
@@ -86,6 +110,35 @@ function Test-ProfileContent($path, $content) {
     }
 }
 
+function Test-AppProfileContent($path, $content) {
+    $activeRoot = Get-FieldValue $content "Active root"
+    if ([string]::IsNullOrWhiteSpace($activeRoot)) {
+        Fail "$path missing filled Active root"
+        return
+    }
+
+    $normalizedActiveRoot = $activeRoot.Replace("\", "/").Trim("/")
+    if (-not $normalizedActiveRoot.StartsWith("workspaces/", [System.StringComparison]::OrdinalIgnoreCase)) {
+        Fail "$path Active root must be under workspaces/: $activeRoot"
+    }
+
+    if ($normalizedActiveRoot.Contains("..") -or [System.IO.Path]::IsPathRooted($normalizedActiveRoot)) {
+        Fail "$path Active root must be repo-relative without traversal: $activeRoot"
+    }
+
+    $activeRootPath = Join-Path $repoRoot ($normalizedActiveRoot.Replace("/", "\"))
+    if (-not (Test-Path -LiteralPath $activeRootPath -PathType Container)) {
+        Fail "$path Active root does not exist: $activeRoot"
+    }
+
+    foreach ($field in @("Git mode", "Git root", "Git steward", "Contract directory", "Minimal smoke verification")) {
+        $value = Get-FieldValue $content $field
+        if ([string]::IsNullOrWhiteSpace($value) -or $value -eq "Needs Confirmation") {
+            Fail "$path has empty or unresolved field: $field"
+        }
+    }
+}
+
 if ([string]::IsNullOrWhiteSpace($ProfilePath)) {
     $ProfilePath = "docs/templates/WORKSPACE_PROFILE.template.md"
 }
@@ -103,6 +156,7 @@ else {
     $defaultTemplate = [System.IO.Path]::GetFullPath((Join-Path $repoRoot "docs/templates/WORKSPACE_PROFILE.template.md"))
     if (-not $fullPath.Equals($defaultTemplate, [System.StringComparison]::OrdinalIgnoreCase)) {
         Test-AppProfilePath $fullPath
+        Test-AppProfileContent $ProfilePath $content
     }
 }
 
