@@ -37,6 +37,7 @@ secret_agents_v2/               # governance control plane / 운영 셸
 간단히 말하면, `secret_agents_v2`는 작업 운영 환경이고 `workspaces/my-app`은 실제로 고칠 앱입니다.
 
 전체 역할과 gate 흐름을 그림으로 보고 싶다면 [시스템 아키텍처](./SYSTEM_ARCHITECTURE.ko.md)를 참고하세요.
+새 프로젝트 폴더를 넣은 뒤 Codex에게 profile/manifest 생성을 요청하는 문구가 필요하면 [Workspace 설정 요청 가이드](./WORKSPACE_SETUP_REQUEST.ko.md)를 참고하세요.
 
 ## 핵심 개념
 
@@ -76,21 +77,34 @@ Spec, 설계, 구현 계획 같은 계획 산출물만 요청한 경우에는 Fo
 
 1. `secret_agents_v2`를 프로젝트 루트로 엽니다.
 2. 실제 제품 앱을 `workspaces/<app-slug>` 아래에 clone하거나 복사합니다.
-3. `docs/templates/WORKSPACE_PROFILE.template.md`를 참고해 `workspaces/<app-slug>/.agent/profile.md`를 만듭니다.
+3. Codex에게 `profile.md`와 `manifest.yml` 생성을 요청하거나, `docs/templates/WORKSPACE_PROFILE.template.md`를 참고해 직접 `workspaces/<app-slug>/.agent/profile.md`를 만듭니다.
 4. `profile.md is authoritative` for app-local execution context.
-5. `app-local AGENTS.md is optional`; 앱마다 새 `AGENTS.md`를 기본으로 만들 필요는 없습니다.
-6. 앱 작업을 시작할 때 active workspace를 선언합니다.
+5. `manifest.yml`은 active root, contract root, 검증 명령처럼 기계가 검사해야 하는 핵심 운영값을 담습니다.
+6. `app-local AGENTS.md is optional`; 앱마다 새 `AGENTS.md`를 기본으로 만들 필요는 없습니다.
+7. 앱 작업을 시작할 때 active workspace를 선언합니다.
 
    ```text
    Active workspace: workspaces/<app-slug>
    ```
 
-7. 일반 작업은 Default Workflow로 진행합니다.
-8. Spec, 설계, 구현 계획만 필요하면 Formal Planning Workflow를 요청합니다.
-9. 기획부터 개발까지 맡길 때만 Full Delivery Workflow를 요청합니다.
-10. subagent가 필요하면 별도로 요청하고 task card로 범위를 고정합니다.
-11. 검증 명령은 active workspace 기준으로 실행합니다.
-12. Git 작업은 구현 작업과 분리합니다.
+8. 일반 작업은 Default Workflow로 진행합니다.
+9. Spec, 설계, 구현 계획만 필요하면 Formal Planning Workflow를 요청합니다.
+10. 기획부터 개발까지 맡길 때만 Full Delivery Workflow를 요청합니다.
+11. subagent가 필요하면 별도로 요청하고 task card로 범위를 고정합니다.
+12. 검증 명령은 active workspace 기준으로 실행합니다.
+13. Git 작업은 구현 작업과 분리합니다.
+
+프로젝트를 넣은 직후 agent에게 운영 파일 작성을 맡기려면 이렇게 요청합니다.
+
+```text
+Active workspace: workspaces/my-app
+
+이 프로젝트에 맞게 .agent/profile.md랑 .agent/manifest.yml 만들고 검증해줘.
+그 다음 이 spec 기준으로 작업 준비해줘.
+
+Spec:
+docs/specs/MY_FEATURE.md
+```
 
 ## 주요 구성 요소
 
@@ -162,6 +176,23 @@ docs/templates/WORKSPACE_PROFILE.template.md
 - Git 관련 짧은 포인터
 
 이 파일이 있으면 agent가 앱 구조나 검증 명령을 추측하지 않아도 됩니다.
+
+## Workspace Manifest
+
+각 앱에는 기계가 읽는 운영 선언을 둘 수 있습니다.
+
+```text
+workspaces/<app-slug>/.agent/manifest.yml
+```
+
+manifest에는 active root, profile path, contract root, smoke command, Git mode처럼 검증 스크립트가 안정적으로 확인해야 하는 값만 둡니다.
+profile은 사람용 설명 문서이고, manifest는 검증용 선언 파일입니다.
+
+manifest 검증은 다음 명령으로 실행합니다.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-workspace-manifest.ps1 -ManifestPath workspaces/<app-slug>/.agent/manifest.yml
+```
 
 ## Git은 어떻게 다루나요?
 
