@@ -4,6 +4,7 @@
 제품 앱 자체가 아니라, 앱을 넣고 작업 경계, 역할 분리, dependency graph, 검증 흐름을 정하는 문서/규칙 중심의 운영 셸입니다.
 
 처음 사용하는 경우 먼저 [사용 설명서](./docs/onboarding/USER_GUIDE.ko.md)를 읽어 주세요.
+새 프로젝트 폴더를 넣고 agent에게 profile/manifest 생성을 요청하는 방법은 [Workspace 설정 요청 가이드](./docs/onboarding/WORKSPACE_SETUP_REQUEST.ko.md)를 참고하세요.
 
 ## v2 difference: 기존 secret_agents와 다른 점
 
@@ -64,6 +65,7 @@ agent는 이 active workspace와 배정된 write scope 안에서만 구현해야
 | --- | --- |
 | [AGENTS.md](./AGENTS.md) | 에이전트가 항상 따라야 하는 운영 원문 |
 | [USER_GUIDE.ko.md](./docs/onboarding/USER_GUIDE.ko.md) | 처음 사용자를 위한 단순 사용 설명서 |
+| [WORKSPACE_SETUP_REQUEST.ko.md](./docs/onboarding/WORKSPACE_SETUP_REQUEST.ko.md) | 새 프로젝트를 넣은 뒤 profile.md와 manifest.yml 생성을 요청하는 방법 |
 | [SYSTEM_ARCHITECTURE.ko.md](./docs/onboarding/SYSTEM_ARCHITECTURE.ko.md) | 전체 오케스트레이션 구조와 역할 흐름 |
 | [workflow.md](./docs/agent-rules/workflow.md) | Formal Planning, Full Delivery workflow, Spec/Task/Handover 형식 |
 | [hybrid-orchestration.md](./docs/agent-rules/hybrid-orchestration.md) | Root/Domain/Worker 계층과 dependency-aware hybrid orchestration 규칙 |
@@ -91,9 +93,11 @@ agent는 이 active workspace와 배정된 write scope 안에서만 구현해야
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-docs.ps1
 ```
 
-이 검증은 필수 문서, 핵심 참조, task card 필드, Git Steward 규칙, Markdown links, 실제 `.env*` 추적 여부, secret-like values, Markdown trailing whitespace를 확인합니다.
+이 검증은 필수 문서, 핵심 참조, task card 필드, Git Steward 규칙, sample workspace profile/manifest, delivery readiness fixture, Markdown links, 실제 `.env*` 추적 여부, secret-like values, Markdown trailing whitespace를 확인합니다.
 Git Steward가 staging 전에 변경 대상을 볼 때는 `scripts/classify-git-target.ps1`로 shell/app 범위를 먼저 분류합니다.
-오케스트레이션 구조는 `scripts/check-orchestration.ps1`, 계약 문서는 `scripts/check-contracts.ps1`로 별도 점검합니다.
+오케스트레이션 구조는 `scripts/check-orchestration.ps1`, 계약 문서는 `scripts/check-contracts.ps1`, workspace 운영 선언은 `scripts/check-workspace-manifest.ps1`, 채워진 task/checklist/active contract 준비 상태는 `scripts/check-delivery-readiness.ps1`로 별도 점검합니다.
+
+앱 workspace에서는 `profile.md`를 사람용 운영 문서로 유지하고, `.agent/manifest.yml`에는 active root, contract root, smoke command, Git mode처럼 기계가 검증해야 하는 핵심 운영값만 둡니다. `check-workspace-manifest.ps1`는 manifest 값이 실제 파일 시스템 및 profile.md와 일치하는지 확인합니다.
 
 ## Skill 설치
 
