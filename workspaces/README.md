@@ -17,10 +17,20 @@ Each app workspace should provide a profile at:
 workspaces/<app-slug>/.agent/profile.md
 ```
 
+Each app workspace may also provide a machine-readable manifest at:
+
+```text
+workspaces/<app-slug>/.agent/manifest.yml
+```
+
 Use `docs/templates/WORKSPACE_PROFILE.template.md` when creating that profile.
 The profile should define allowed write scopes, forbidden paths, verification commands, contract locations, and Git pointer metadata.
 The `profile.md is authoritative` for app-local execution context.
 An `app-local AGENTS.md is optional`; create one only when the app needs stable local agent guidance beyond the profile.
+
+Use `.agent/manifest.yml` for the small set of values that validators must parse reliably: active root, profile path, contract root, verification command, Git mode, and secret-file policy. Keep explanations and judgment-heavy notes in `profile.md`.
+
+`workspaces/sample-app` is a tracked fixture used by the repository validators. Treat it as test data for governance checks, not as a production app template to copy blindly.
 
 ## Workspace Rules
 
