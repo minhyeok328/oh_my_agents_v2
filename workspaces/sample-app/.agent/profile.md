@@ -9,7 +9,7 @@ An `app-local AGENTS.md is optional`; this sample app does not need one.
 - App name: Sample App
 - App slug: sample-app
 - Active root: workspaces/sample-app
-- Profile owner: secret_agents_v2 fixture
+- Profile owner: oh_my_agents_v2 fixture
 - Last reviewed: 2026-06-20
 
 ## Stack Snapshot
