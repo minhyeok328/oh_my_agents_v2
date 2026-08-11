@@ -1,6 +1,6 @@
 # 로그인 UI Subagent 작업 예시
 
-이 문서는 `secret_agents_v2`에서 subagent 작업이 실제로 어떤 모양으로 흘러가는지 보여주는 예시입니다.
+이 문서는 `oh_my_agents_v2`에서 subagent 작업이 실제로 어떤 모양으로 흘러가는지 보여주는 예시입니다.
 v2에서는 subagent를 단순 보조 작업자가 아니라 owned outcome, checkpoint, scope, verification을 가진 bounded worker로 다룹니다.
 예시 앱은 `workspaces/my-app`에 있다고 가정합니다.
 

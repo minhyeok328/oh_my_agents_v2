@@ -1,6 +1,6 @@
-# secret_agents_v2
+# oh_my_agents_v2
 
-`secret_agents_v2`는 Codex와 subagent가 사용자 Git 프로젝트를 안전하게 작업하도록 돕는 governance control plane입니다.
+`oh_my_agents_v2`는 Codex와 subagent가 사용자 Git 프로젝트를 안전하게 작업하도록 돕는 governance control plane입니다.
 제품 앱 자체가 아니라, 앱을 넣고 작업 경계, 역할 분리, dependency graph, 검증 흐름을 정하는 문서/규칙 중심의 운영 셸입니다.
 
 처음 사용하는 경우 먼저 [사용 설명서](./docs/onboarding/USER_GUIDE.ko.md)를 읽어 주세요.
@@ -8,9 +8,9 @@
 
 ## v2 difference: 기존 secret_agents와 다른 점
 
-기존 `secret_agents`가 "작업 경계와 기본 안전 규칙을 둔 단일 운영 셸"에 가까웠다면, `secret_agents_v2`는 큰 작업을 여러 역할과 dependency-aware hybrid orchestration으로 굴리기 위한 운영 레이어입니다.
+기존 `secret_agents`가 "작업 경계와 기본 안전 규칙을 둔 단일 운영 셸"에 가까웠다면, `oh_my_agents_v2`는 큰 작업을 여러 역할과 dependency-aware hybrid orchestration으로 굴리기 위한 운영 레이어입니다.
 
-| 영역 | 기존 secret_agents | secret_agents_v2 |
+| 영역 | 기존 secret_agents | oh_my_agents_v2 |
 | --- | --- | --- |
 | 실행 모델 | Codex 중심의 단일 작업 흐름 | Root Orchestrator, Domain Orchestrator, Task Worker, Review/Security/Git 역할 분리 |
 | 병렬 처리 | 병렬 가능성을 문서화 | dependency graph, ready node, rolling unlock 기반 hybrid orchestration |
@@ -35,7 +35,7 @@
 일반적인 구조는 다음과 같습니다.
 
 ```text
-secret_agents_v2/               # governance control plane / 운영 셸
+oh_my_agents_v2/                # governance control plane / 운영 셸
 +-- AGENTS.md                    # 항상 적용되는 운영 규칙
 +-- docs/                        # agent 규칙, 템플릿, 온보딩 문서
 +-- scripts/                     # 문서 검증 등 보조 스크립트

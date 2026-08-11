@@ -1,6 +1,6 @@
 # Dry-run fixture
 
-This fixture exercises the `secret_agents_v2` governance flow with a tracked sample app workspace.
+This fixture exercises the `oh_my_agents_v2` governance flow with a tracked sample app workspace.
 Use it when changing rules, templates, validators, or onboarding copy and you want a quick system-level rehearsal.
 
 ## Model

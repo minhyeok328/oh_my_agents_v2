@@ -1,11 +1,11 @@
-# secret_agents_v2 시스템 아키텍처
+# oh_my_agents_v2 시스템 아키텍처
 
-이 문서는 `secret_agents_v2`의 오케스트레이션 구조를 한눈에 보기 위한 온보딩 문서입니다.
+이 문서는 `oh_my_agents_v2`의 오케스트레이션 구조를 한눈에 보기 위한 온보딩 문서입니다.
 역할의 상세 책임은 [roles.md](../agent-rules/roles.md), subagent 실행 규칙은 [subagent-execution.md](../agent-rules/subagent-execution.md), hybrid orchestration 규칙은 [hybrid-orchestration.md](../agent-rules/hybrid-orchestration.md)를 기준으로 합니다.
 
 ## 핵심 모델
 
-`secret_agents_v2`는 사용자와 subagent 사이에서 작업 경계, dependency, contract, review, Git 흐름을 통제하는 governance control plane입니다.
+`oh_my_agents_v2`는 사용자와 subagent 사이에서 작업 경계, dependency, contract, review, Git 흐름을 통제하는 governance control plane입니다.
 메인 Codex 세션은 사용자에게 보고하는 단일 채널이고, Root Orchestrator가 전체 실행 판단을 잡습니다.
 
 모든 역할이 별도 subagent로 생성된다고 가정하면 구조는 다음과 같습니다.
